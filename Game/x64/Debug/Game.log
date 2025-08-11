@@ -1,0 +1,18 @@
+﻿  main.cpp
+  TestApp.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Game\TestApp.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'TestApp.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Editor\KoreanStrings.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'TestApp.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Components\SpriteRenderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'TestApp.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\8월 과제\AronEngine\Game\TestApp.cpp(145,69): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\User\Desktop\8월 과제\AronEngine\Game\TestApp.cpp(322,56): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\User\Desktop\8월 과제\AronEngine\Game\TestApp.cpp(325,56): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\User\Desktop\8월 과제\AronEngine\Game\TestApp.cpp(328,46): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
+  Game.vcxproj -> C:\Users\User\Desktop\8월 과제\AronEngine\x64\Debug\Game.exe

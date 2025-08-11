@@ -1,0 +1,56 @@
+{
+  "gameObjects": [
+    {
+      "name": "Player",
+      "active": true,
+      "transform": {
+        "position": [400, 300],
+        "rotation": 0,
+        "scale": [1, 1]
+      },
+      "spriteRenderer": {
+        "color": [0.0, 1.0, 0.0, 1.0],
+        "size": [64, 64]
+      }
+    },
+    {
+      "name": "Platform1",
+      "active": true,
+      "transform": {
+        "position": [200, 450],
+        "rotation": 0,
+        "scale": [1, 1]
+      },
+      "spriteRenderer": {
+        "color": [0.8, 0.4, 0.2, 1.0],
+        "size": [200, 32]
+      }
+    },
+    {
+      "name": "Platform2",
+      "active": true,
+      "transform": {
+        "position": [600, 400],
+        "rotation": 0,
+        "scale": [1, 1]
+      },
+      "spriteRenderer": {
+        "color": [0.8, 0.4, 0.2, 1.0],
+        "size": [150, 32]
+      }
+    },
+    {
+      "name": "Enemy",
+      "active": true,
+      "transform": {
+        "position": [650, 350],
+        "rotation": 0,
+        "scale": [1, 1]
+      },
+      "spriteRenderer": {
+        "color": [1.0, 0.0, 0.0, 1.0],
+        "size": [48, 48]
+      }
+    }
+  ]
+}

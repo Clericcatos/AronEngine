@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{A7B5E8F1-2C3D-4E5F-6A7B-8C9D0E1F2A3B}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Engine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Core;$(ProjectDir)Components;$(ProjectDir)Systems;$(ProjectDir)Managers;$(ProjectDir)Editor;$(ProjectDir)Utils;$(ProjectDir)..\External;$(ProjectDir)..\ThirdParty\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <!-- <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile> -->
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Core;$(ProjectDir)Components;$(ProjectDir)Systems;$(ProjectDir)Managers;$(ProjectDir)Editor;$(ProjectDir)Utils;$(ProjectDir)..\External;$(ProjectDir)..\ThirdParty\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <!-- <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile> -->
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\framework.h" />
+    <ClInclude Include="Core\Singleton.h" />
+    <ClInclude Include="Core\EngineApp.h" />
+    <ClInclude Include="Core\EngineTime.h" />
+    <ClInclude Include="Core\Input.h" />
+    <ClInclude Include="Core\Renderer.h" />
+    <ClInclude Include="Core\Object.h" />
+    <ClInclude Include="Core\GameObject.h" />
+    <ClInclude Include="Core\Scene.h" />
+    <ClInclude Include="Components\Component.h" />
+    <ClInclude Include="Components\Transform.h" />
+    <ClInclude Include="Components\SpriteRenderer.h" />
+    <ClInclude Include="Components\Animator.h" />
+    <ClInclude Include="Components\Collider.h" />
+    <ClInclude Include="Components\Rigidbody.h" />
+    <ClInclude Include="Components\UI\Canvas.h" />
+    <ClInclude Include="Components\UI\UIElement.h" />
+    <ClInclude Include="Components\UI\UIButton.h" />
+    <ClInclude Include="Managers\SceneManager.h" />
+    <ClInclude Include="Managers\ResourceManager.h" />
+    <ClInclude Include="Managers\SimpleAudioManager.h" />
+    <ClInclude Include="Systems\RenderSystem.h" />
+    <ClInclude Include="Systems\TransformSystem.h" />
+    <ClInclude Include="Systems\ScriptSystem.h" />
+    <ClInclude Include="Editor\EditorSystem.h" />
+    <ClInclude Include="Editor\ImGuiEditorSystem.h" />
+    <ClInclude Include="Editor\KoreanStrings.h" />
+    <ClInclude Include="Core\TextureManager.h" />
+    <ClInclude Include="Resources\Texture2D.h" />
+    <ClInclude Include="Resources\AnimationClip.h" />
+    <ClInclude Include="Utils\Vector2.h" />
+    <ClInclude Include="Utils\Color.h" />
+    <ClInclude Include="Utils\Matrix3x2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\EngineApp.cpp" />
+    <ClCompile Include="Core\EngineTime.cpp" />
+    <ClCompile Include="Core\Input.cpp" />
+    <ClCompile Include="Core\Renderer.cpp" />
+    <ClCompile Include="Core\Object.cpp" />
+    <ClCompile Include="Core\GameObject.cpp" />
+    <ClCompile Include="Core\Scene.cpp" />
+    <ClCompile Include="Components\Component.cpp" />
+    <ClCompile Include="Components\Transform.cpp" />
+    <ClCompile Include="Components\SpriteRenderer.cpp" />
+    <ClCompile Include="Components\Animator.cpp" />
+    <ClCompile Include="Components\Collider.cpp" />
+    <ClCompile Include="Components\Rigidbody.cpp" />
+    <ClCompile Include="Components\UI\Canvas.cpp" />
+    <ClCompile Include="Components\UI\UIElement.cpp" />
+    <ClCompile Include="Components\UI\UIButton.cpp" />
+    <ClCompile Include="Managers\SceneManager.cpp" />
+    <ClCompile Include="Managers\ResourceManager.cpp" />
+    <ClCompile Include="Managers\SimpleAudioManager.cpp" />
+    <ClCompile Include="Systems\RenderSystem.cpp" />
+    <ClCompile Include="Systems\TransformSystem.cpp" />
+    <ClCompile Include="Systems\ScriptSystem.cpp" />
+    <ClCompile Include="Editor\EditorSystem.cpp" />
+    <ClCompile Include="Editor\ImGuiEditorSystem.cpp" />
+    <ClCompile Include="Editor\KoreanStrings.cpp" />
+    <ClCompile Include="..\ThirdParty\ImGui\imgui.cpp" />
+    <ClCompile Include="..\ThirdParty\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="..\ThirdParty\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="..\ThirdParty\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="..\ThirdParty\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="..\ThirdParty\ImGui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\ThirdParty\ImGui\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Resources\Texture2D.cpp" />
+    <ClCompile Include="Resources\AnimationClip.cpp" />
+    <ClCompile Include="Core\TextureManager.cpp" />
+    <ClCompile Include="Utils\Vector2.cpp" />
+    <ClCompile Include="Utils\Color.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

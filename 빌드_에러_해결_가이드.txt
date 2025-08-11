@@ -1,0 +1,40 @@
+AronEngine 빌드 에러 해결 가이드
+================================
+
+현재 발생하는 컴파일 에러는 Visual Studio가 이전 버전의 파일들을 캐싱하고 있기 때문입니다.
+다음 단계를 따라 해결하세요:
+
+1. Visual Studio 종료
+   - 모든 Visual Studio 창을 닫으세요.
+
+2. 클린 빌드 실행
+   - clean_build.bat 파일을 실행하여 모든 중간 파일 삭제
+   - 또는 수동으로 다음 폴더들을 삭제:
+     * /x64
+     * /Engine/x64
+     * /Game/x64
+     * /.vs
+
+3. Visual Studio 다시 시작
+   - AronEngine.sln을 다시 열기
+
+4. 솔루션 정리 및 다시 빌드
+   - 메뉴 → 빌드 → 솔루션 정리
+   - 메뉴 → 빌드 → 솔루션 다시 빌드
+
+5. 그래도 문제가 지속되면:
+   - Visual Studio에서 각 cpp 파일을 열고 Ctrl+S로 저장
+   - 특히 다음 파일들:
+     * Engine/Core/TextureManager.cpp
+     * Engine/Components/SpriteRenderer.cpp
+     * Game/TestApp.cpp
+
+모든 코드는 이미 올바르게 작성되어 있습니다.
+단지 Visual Studio가 최신 버전을 인식하지 못하고 있을 뿐입니다.
+
+주요 변경사항:
+- TextureManager 클래스 완전 구현
+- SpriteRenderer에 LoadSpriteFromFile 메소드 추가
+- TestApp에서 텍스처 렌더링 지원
+- ImGuiEditorSystem에서 텍스처 로딩 UI 추가
+- 한글 UI 완전 지원

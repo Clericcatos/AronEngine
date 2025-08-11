@@ -1,0 +1,126 @@
+﻿  EngineApp.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Core/EngineApp.cpp'을(를) 컴파일하는 중)
+  
+  EngineTime.cpp
+  Input.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Input.cpp(36,29): warning C4244: '인수': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Input.cpp(40,29): warning C4244: '인수': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Renderer.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Renderer.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Core/Renderer.cpp'을(를) 컴파일하는 중)
+  
+  Object.cpp
+  GameObject.cpp
+  Scene.cpp
+  Component.cpp
+  Transform.cpp
+  SpriteRenderer.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Components\SpriteRenderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Components/SpriteRenderer.cpp'을(를) 컴파일하는 중)
+  
+  Animator.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Components\SpriteRenderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Components/Animator.cpp'을(를) 컴파일하는 중)
+  
+  Collider.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Components/Collider.cpp'을(를) 컴파일하는 중)
+  
+  Rigidbody.cpp
+  Canvas.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Components/UI/Canvas.cpp'을(를) 컴파일하는 중)
+  
+  UIElement.cpp
+  UIButton.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Components/UI/UIButton.cpp'을(를) 컴파일하는 중)
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xutility(4813,18): warning C4244: '=': 'wchar_t'에서 'char'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 'Components/UI/UIButton.cpp'을(를) 컴파일하는 중)
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xutility(4813,18):
+      템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
+          C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Components\UI\UIButton.cpp(77,9):
+          컴파일되는 함수 템플릿 인스턴스화 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Components\UI\UIButton.cpp(77,9):
+              'AronEngine::UIButton::OnClick'에서 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string'에 대한 첫 번째 참조를 확인하세요.
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(812,17):
+          컴파일되는 함수 템플릿 인스턴스화 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*,wchar_t*,_Size_type>(_Iter,const _Sent,_Size)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=wchar_t *,
+              _Sent=wchar_t *,
+              _Size=unsigned __int64
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(968,18):
+          컴파일되는 함수 템플릿 인스턴스화 '_OutIt *std::_Copy_n_unchecked4<wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)'에 대한 참조를 확인하세요.
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  SceneManager.cpp
+  ResourceManager.cpp
+  SimpleAudioManager.cpp
+  RenderSystem.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Systems\RenderSystem.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Systems/RenderSystem.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Components\SpriteRenderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Systems/RenderSystem.cpp'을(를) 컴파일하는 중)
+  
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  TransformSystem.cpp
+  ScriptSystem.cpp
+  EditorSystem.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Editor/EditorSystem.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Editor\EditorSystem.cpp(175,21): warning C4244: '초기화 중': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  ImGuiEditorSystem.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Editor\ImGuiEditorSystem.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Editor/ImGuiEditorSystem.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Components\SpriteRenderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Editor/ImGuiEditorSystem.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Editor\KoreanStrings.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Editor/ImGuiEditorSystem.cpp'을(를) 컴파일하는 중)
+  
+  KoreanStrings.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Editor\KoreanStrings.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Editor/KoreanStrings.cpp'을(를) 컴파일하는 중)
+  
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  imgui_impl_win32.cpp
+  imgui_impl_dx11.cpp
+  Texture2D.cpp
+  AnimationClip.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Components\SpriteRenderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Resources/AnimationClip.cpp'을(를) 컴파일하는 중)
+  
+  TextureManager.cpp
+  Vector2.cpp
+  Color.cpp
+C:\Users\User\Desktop\8월 과제\AronEngine\Engine\Utils\Color.cpp(22,17): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
+  Engine.vcxproj -> C:\Users\User\Desktop\8월 과제\AronEngine\x64\Debug\Engine.lib
