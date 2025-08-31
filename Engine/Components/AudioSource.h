@@ -1,6 +1,20 @@
 #pragma once
 #include "Component.h"
 #include <memory>
+#include <algorithm>
+
+#ifdef max
+#undef max
+#endif
+#ifdef min
+#undef min
+#endif
+
+// Forward declarations for FMOD
+namespace FMOD
+{
+    class Channel;
+}
 
 namespace AronEngine
 {
@@ -10,6 +24,7 @@ namespace AronEngine
     {
     private:
         std::shared_ptr<AudioClip> clip;
+        FMOD::Channel* channel;
         bool isPlaying;
         bool isPaused;
         bool loop;
@@ -36,7 +51,7 @@ namespace AronEngine
 
         // Playback control
         void Play();
-        void PlayOneShot(std::shared_ptr<AudioClip> clipToPlay);
+        void PlayOneShot(std::shared_ptr<AudioClip> clipToPlay, float volumeScale = 1.0f);
         void Pause();
         void UnPause();
         void Stop();
@@ -45,16 +60,16 @@ namespace AronEngine
         void SetClip(std::shared_ptr<AudioClip> newClip);
         std::shared_ptr<AudioClip> GetClip() const { return clip; }
 
-        void SetVolume(float vol) { volume = std::max(0.0f, std::min(1.0f, vol)); }
+        void SetVolume(float vol);
         float GetVolume() const { return volume; }
 
-        void SetPitch(float p) { pitch = std::max(0.1f, std::min(3.0f, p)); }
+        void SetPitch(float p);
         float GetPitch() const { return pitch; }
 
-        void SetLoop(bool shouldLoop) { loop = shouldLoop; }
+        void SetLoop(bool shouldLoop);
         bool GetLoop() const { return loop; }
 
-        void SetMute(bool shouldMute) { mute = shouldMute; }
+        void SetMute(bool shouldMute);
         bool GetMute() const { return mute; }
 
         void SetSpatialBlend(float blend) { spatialBlend = std::max(0.0f, std::min(1.0f, blend)); }
@@ -70,10 +85,13 @@ namespace AronEngine
         int GetPriority() const { return priority; }
 
         // Status
-        bool IsPlaying() const { return isPlaying; }
+        bool IsPlaying() const;
         bool IsPaused() const { return isPaused; }
+        float GetTime() const;
+        void SetTime(float time);
 
     private:
         void UpdateSpatialAudio();
+        void ApplySettings();
     };
 }

@@ -5,12 +5,12 @@
 #include "Renderer.h"
 #include "../Managers/SceneManager.h"
 #include "../Managers/ResourceManager.h"
-#include "../Managers/SimpleAudioManager.h"
+#include "../Managers/AudioManager.h"
 #include "../Systems/RenderSystem.h"
 #include "../Systems/TransformSystem.h"
 #include "../Systems/ScriptSystem.h"
-#include "../Editor/EditorSystem.h"
-#include "../Editor/ImGuiEditorSystem.h"
+#include "../Editor/LightUnityEditor.h"
+#include <shellapi.h>
 
 namespace AronEngine
 {
@@ -65,21 +65,12 @@ namespace AronEngine
             return false;
         }
 
-        if (!SimpleAudioManager::GetInstance().Initialize())
+        if (!AudioManager::GetInstance().Initialize(hWnd))
         {
-            DEBUG_LOG("Failed to initialize simple audio manager");
+            DEBUG_LOG("Failed to initialize audio manager");
             return false;
         }
 
-        if (isEditorMode)
-        {
-            editorSystem = std::make_unique<EditorSystem>();
-            if (!editorSystem->Initialize(hWnd, renderer.get()))
-            {
-                DEBUG_LOG("Failed to initialize editor system");
-                return false;
-            }
-        }
 
         OnInit();
 
@@ -122,10 +113,6 @@ namespace AronEngine
     {
         OnShutdown();
 
-        if (editorSystem)
-        {
-            editorSystem->Shutdown();
-        }
 
         scriptSystem.reset();
         transformSystem.reset();
@@ -135,9 +122,8 @@ namespace AronEngine
         renderer.reset();
         input.reset();
         time.reset();
-        editorSystem.reset();
         
-        SimpleAudioManager::GetInstance().Shutdown();
+        AudioManager::GetInstance().Shutdown();
 
         if (hWnd)
         {
@@ -190,6 +176,9 @@ namespace AronEngine
         {
             return false;
         }
+        
+        // Enable drag and drop
+        DragAcceptFiles(hWnd, TRUE);
 
         return true;
     }
@@ -197,11 +186,10 @@ namespace AronEngine
     void EngineApp::Update(float deltaTime)
     {
         input->Update();
+        
+        // Update FMOD system
+        AudioManager::GetInstance().Update();
 
-        if (editorSystem && isEditorMode)
-        {
-            editorSystem->Update(deltaTime);
-        }
 
         if (sceneManager->GetActiveScene())
         {
@@ -224,10 +212,6 @@ namespace AronEngine
 
         OnRender();
 
-        if (editorSystem && isEditorMode)
-        {
-            editorSystem->Render();
-        }
 
         renderer->EndDraw();
     }
@@ -259,23 +243,28 @@ namespace AronEngine
 
         if (app)
         {
-            // Handle ImGui messages first
-            auto& imguiEditor = ImGuiEditorSystem::GetInstance();
-            if (imguiEditor.ProcessWndProc(hWnd, message, wParam, lParam))
-            {
-                return 0;
-            }
-            
-            if (app->editorSystem && app->isEditorMode)
-            {
-                if (app->editorSystem->ProcessWndProc(hWnd, message, wParam, lParam))
-                {
-                    return 0;
-                }
-            }
 
             switch (message)
             {
+            case WM_DROPFILES:
+                {
+                    HDROP hDrop = (HDROP)wParam;
+                    UINT fileCount = DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);
+                    
+                    for (UINT i = 0; i < fileCount; i++)
+                    {
+                        wchar_t filePath[MAX_PATH];
+                        if (DragQueryFileW(hDrop, i, filePath, MAX_PATH) > 0)
+                        {
+                            // Send to RealUnityEditor
+                            LightUnityEditor::GetInstance().HandleDragDrop(filePath);
+                        }
+                    }
+                    
+                    DragFinish(hDrop);
+                }
+                return 0;
+                
             case WM_SIZE:
                 if (app->renderer && wParam != SIZE_MINIMIZED)
                 {

@@ -80,37 +80,8 @@ namespace AronEngine
             return false;
         }
 
-        // Create a D3D11 device for ImGui rendering
-        D3D_FEATURE_LEVEL featureLevel;
-        HRESULT hr = D3D11CreateDevice(
-            nullptr,
-            D3D_DRIVER_TYPE_HARDWARE,
-            nullptr,
-            D3D11_CREATE_DEVICE_DEBUG,
-            nullptr, 0,
-            D3D11_SDK_VERSION,
-            &d3d11Device,
-            &featureLevel,
-            &d3d11Context
-        );
-
-        if (SUCCEEDED(hr))
-        {
-            if (!ImGui_ImplDX11_Init(d3d11Device, d3d11Context))
-            {
-                DEBUG_LOG("ImGui DX11 backend initialization failed");
-                d3d11Device->Release();
-                d3d11Context->Release();
-                d3d11Device = nullptr;
-                d3d11Context = nullptr;
-                return false;
-            }
-        }
-        else
-        {
-            DEBUG_LOG("Failed to create D3D11 device for ImGui");
-            return false;
-        }
+        // Use Win32 backend only for now to avoid D3D11/Direct2D conflicts
+        DEBUG_LOG("Skipping D3D11 initialization for ImGui - using software rendering");
 
         DEBUG_LOG("ImGui Editor System initialized successfully");
         DEBUG_LOG("Docking enabled: " + std::string(isDockingEnabled ? "Yes" : "No"));
@@ -123,7 +94,8 @@ namespace AronEngine
     {
         if (imguiContext)
         {
-            ImGui_ImplDX11_Shutdown();
+            if (d3d11Device && d3d11Context)
+                ImGui_ImplDX11_Shutdown();
             ImGui_ImplWin32_Shutdown();
             ImGui::DestroyContext(imguiContext);
             imguiContext = nullptr;
@@ -151,7 +123,8 @@ namespace AronEngine
         ImGui::SetCurrentContext(imguiContext);
         
         // Start the Dear ImGui frame
-        ImGui_ImplDX11_NewFrame();
+        if (d3d11Device && d3d11Context)
+            ImGui_ImplDX11_NewFrame();
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
@@ -159,6 +132,8 @@ namespace AronEngine
         {
             SetupDocking();
         }
+        
+        DEBUG_LOG("ImGui BeginFrame called - isEnabled: " + std::string(isEnabled ? "true" : "false"));
     }
 
     void ImGuiEditorSystem::EndFrame()
@@ -169,7 +144,8 @@ namespace AronEngine
         
         // Rendering
         ImGui::Render();
-        ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+        if (d3d11Device && d3d11Context)
+            ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
         // Update and Render additional Platform Windows
         ImGuiIO& io = ImGui::GetIO();
@@ -191,6 +167,8 @@ namespace AronEngine
         if (!isEnabled || !imguiContext) return;
 
         ImGui::SetCurrentContext(imguiContext);
+        
+        DEBUG_LOG("ImGui Render called - Drawing editor windows");
 
         // Main menu bar
         RenderMainMenuBar();
@@ -351,10 +329,23 @@ namespace AronEngine
             // Right-click context menu
             if (ImGui::BeginPopupContextWindow())
             {
-                if (ImGui::MenuItem("Create Empty GameObject")) {}
+                if (ImGui::MenuItem("Create Empty GameObject")) 
+                {
+                    CreateGameObject("GameObject");
+                }
                 ImGui::Separator();
-                if (ImGui::MenuItem("Create Sprite")) {}
-                if (ImGui::MenuItem("Create Camera")) {}
+                if (ImGui::MenuItem("Create Sprite")) 
+                {
+                    CreateSpriteObject("Sprite");
+                }
+                if (ImGui::MenuItem("Create Square")) 
+                {
+                    CreateSquareObject("Square");
+                }
+                if (ImGui::MenuItem("Create Circle")) 
+                {
+                    CreateCircleObject("Circle");
+                }
                 ImGui::EndPopup();
             }
         }

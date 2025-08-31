@@ -12,8 +12,6 @@ namespace AronEngine
     class RenderSystem;
     class TransformSystem;
     class ScriptSystem;
-    class EditorSystem;
-
     class EngineApp : public Singleton<EngineApp>
     {
         friend class Singleton<EngineApp>;
@@ -36,7 +34,6 @@ namespace AronEngine
         std::unique_ptr<RenderSystem> renderSystem;
         std::unique_ptr<TransformSystem> transformSystem;
         std::unique_ptr<ScriptSystem> scriptSystem;
-        std::unique_ptr<EditorSystem> editorSystem;
 
     protected:
         EngineApp();
@@ -63,7 +60,6 @@ namespace AronEngine
         Renderer* GetRenderer() const { return renderer.get(); }
         SceneManager* GetSceneManager() const { return sceneManager.get(); }
         ResourceManager* GetResourceManager() const { return resourceManager.get(); }
-        EditorSystem* GetEditorSystem() const { return editorSystem.get(); }
 
     private:
         bool CreateAppWindow();

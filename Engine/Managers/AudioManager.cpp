@@ -1,15 +1,17 @@
 #include "framework.h"
 #include "AudioManager.h"
 #include "../Resources/AudioClip.h"
-#include <mmsystem.h>
-#include <mmreg.h>
+#include "../../ThirdParty/FMOD/inc/fmod.hpp"
+#include "../../ThirdParty/FMOD/inc/fmod_errors.h"
+#include <algorithm>
+
+// #pragma comment(lib, "fmod_vc.lib") // Using dummy implementation for now
 
 namespace AronEngine
 {
     AudioManager::AudioManager()
-        : directSound(nullptr)
-        , primaryBuffer(nullptr)
-        , hWnd(nullptr)
+        : fmodSystem(nullptr)
+        , masterGroup(nullptr)
         , initialized(false)
     {
     }
@@ -19,32 +21,32 @@ namespace AronEngine
         Shutdown();
     }
 
-    bool AudioManager::Initialize(HWND windowHandle)
+    bool AudioManager::Initialize(void* windowHandle)
     {
         if (initialized) return true;
 
-        hWnd = windowHandle;
-
-        if (!CreateDirectSound())
+        if (!CreateFMODSystem())
         {
-            DEBUG_LOG("Failed to create DirectSound");
+            DEBUG_LOG("Failed to create FMOD System");
             return false;
         }
 
-        if (!SetCooperativeLevel())
+        if (!InitializeFMODSystem())
         {
-            DEBUG_LOG("Failed to set DirectSound cooperative level");
+            DEBUG_LOG("Failed to initialize FMOD System");
             return false;
         }
 
-        if (!CreatePrimaryBuffer())
+        // Get master channel group
+        FMOD_RESULT result = fmodSystem->getMasterChannelGroup(&masterGroup);
+        if (result != FMOD_OK)
         {
-            DEBUG_LOG("Failed to create primary buffer");
+            DEBUG_LOG("Failed to get master channel group: " + std::string(FMOD_ErrorString(result)));
             return false;
         }
 
         initialized = true;
-        DEBUG_LOG("AudioManager initialized successfully with DirectSound");
+        DEBUG_LOG("AudioManager initialized successfully with FMOD");
         return true;
     }
 
@@ -54,23 +56,26 @@ namespace AronEngine
 
         UnloadAllAudioClips();
 
-        if (primaryBuffer)
+        if (fmodSystem)
         {
-            primaryBuffer->Release();
-            primaryBuffer = nullptr;
+            fmodSystem->release();
+            fmodSystem = nullptr;
         }
 
-        if (directSound)
-        {
-            directSound->Release();
-            directSound = nullptr;
-        }
-
+        masterGroup = nullptr;
         initialized = false;
         DEBUG_LOG("AudioManager shutdown");
     }
 
-    std::shared_ptr<AudioClip> AudioManager::LoadAudioClip(const std::string& filePath)
+    void AudioManager::Update()
+    {
+        if (fmodSystem)
+        {
+            fmodSystem->update();
+        }
+    }
+
+    std::shared_ptr<AudioClip> AudioManager::LoadAudioClip(const std::string& filePath, bool is3D, bool isLooping, bool isStream)
     {
         if (!initialized)
         {
@@ -78,19 +83,22 @@ namespace AronEngine
             return nullptr;
         }
 
-        // Check if already loaded
-        auto it = audioClips.find(filePath);
+        // Create a unique key for this audio clip configuration
+        std::string key = filePath + "_" + (is3D ? "3D" : "2D") + "_" + (isLooping ? "Loop" : "Once") + "_" + (isStream ? "Stream" : "Sample");
+        
+        // Check if already loaded with these settings
+        auto it = audioClips.find(key);
         if (it != audioClips.end())
         {
-            DEBUG_LOG("Audio clip already loaded: " + filePath);
+            DEBUG_LOG("Audio clip already loaded: " + key);
             return it->second;
         }
 
         // Create and load new audio clip
         auto audioClip = std::make_shared<AudioClip>();
-        if (audioClip->LoadFromFile(filePath))
+        if (audioClip->LoadFromFile(filePath, is3D, isLooping, isStream))
         {
-            audioClips[filePath] = audioClip;
+            audioClips[key] = audioClip;
             DEBUG_LOG("Audio clip loaded successfully: " + filePath);
             return audioClip;
         }
@@ -103,12 +111,20 @@ namespace AronEngine
 
     void AudioManager::UnloadAudioClip(const std::string& filePath)
     {
-        auto it = audioClips.find(filePath);
-        if (it != audioClips.end())
+        // Remove all variations of this audio clip
+        auto it = audioClips.begin();
+        while (it != audioClips.end())
         {
-            it->second->Unload();
-            audioClips.erase(it);
-            DEBUG_LOG("Audio clip unloaded: " + filePath);
+            if (it->first.find(filePath) == 0) // Starts with the file path
+            {
+                it->second->Unload();
+                it = audioClips.erase(it);
+                DEBUG_LOG("Audio clip unloaded: " + filePath);
+            }
+            else
+            {
+                ++it;
+            }
         }
     }
 
@@ -124,127 +140,121 @@ namespace AronEngine
 
     void AudioManager::SetMasterVolume(float volume)
     {
-        if (!primaryBuffer) return;
+        if (!masterGroup) return;
 
         // Clamp volume between 0.0f and 1.0f
         volume = std::max(0.0f, std::min(1.0f, volume));
         
-        long attenuation = VolumeToAttenuation(volume);
-        HRESULT result = primaryBuffer->SetVolume(attenuation);
+        FMOD_RESULT result = masterGroup->setVolume(volume);
         
-        if (SUCCEEDED(result))
+        if (result == FMOD_OK)
         {
             DEBUG_LOG("Master volume set to: " + std::to_string(volume));
         }
         else
         {
-            DEBUG_LOG("Failed to set master volume");
+            DEBUG_LOG("Failed to set master volume: " + std::string(FMOD_ErrorString(result)));
         }
     }
 
     float AudioManager::GetMasterVolume() const
     {
-        if (!primaryBuffer) return 0.0f;
+        if (!masterGroup) return 0.0f;
 
-        long attenuation;
-        HRESULT result = primaryBuffer->GetVolume(&attenuation);
+        float volume = 0.0f;
+        FMOD_RESULT result = masterGroup->getVolume(&volume);
         
-        if (SUCCEEDED(result))
+        if (result == FMOD_OK)
         {
-            return AttenuationToVolume(attenuation);
+            return volume;
         }
         
         return 0.0f;
     }
 
-    bool AudioManager::IsFormatSupported(const WAVEFORMATEX& format) const
+    void AudioManager::Set3DListenerPosition(float x, float y, float z)
     {
-        if (!directSound) return false;
+        if (!fmodSystem) return;
 
-        // Try to create a temporary buffer with this format
-        DSBUFFERDESC bufferDesc = {};
-        bufferDesc.dwSize = sizeof(DSBUFFERDESC);
-        bufferDesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPAN;
-        bufferDesc.dwBufferBytes = format.nAvgBytesPerSec; // 1 second buffer
-        bufferDesc.lpwfxFormat = const_cast<WAVEFORMATEX*>(&format);
+        FMOD_VECTOR pos = { x, y, z };
+        FMOD_VECTOR vel = { 0.0f, 0.0f, 0.0f };
+        FMOD_VECTOR forward = { 0.0f, 0.0f, 1.0f };
+        FMOD_VECTOR up = { 0.0f, 1.0f, 0.0f };
 
-        IDirectSoundBuffer* tempBuffer = nullptr;
-        HRESULT result = directSound->CreateSoundBuffer(&bufferDesc, &tempBuffer, nullptr);
-        
-        if (SUCCEEDED(result))
+        fmodSystem->set3DListenerAttributes(0, &pos, &vel, &forward, &up);
+    }
+
+    void AudioManager::Set3DListenerVelocity(float vx, float vy, float vz)
+    {
+        if (!fmodSystem) return;
+
+        FMOD_VECTOR pos = { 0.0f, 0.0f, 0.0f };
+        FMOD_VECTOR vel = { vx, vy, vz };
+        FMOD_VECTOR forward = { 0.0f, 0.0f, 1.0f };
+        FMOD_VECTOR up = { 0.0f, 1.0f, 0.0f };
+
+        fmodSystem->get3DListenerAttributes(0, &pos, nullptr, nullptr, nullptr);
+        fmodSystem->set3DListenerAttributes(0, &pos, &vel, &forward, &up);
+    }
+
+    void AudioManager::Set3DListenerOrientation(float forwardX, float forwardY, float forwardZ,
+                                               float upX, float upY, float upZ)
+    {
+        if (!fmodSystem) return;
+
+        FMOD_VECTOR pos = { 0.0f, 0.0f, 0.0f };
+        FMOD_VECTOR vel = { 0.0f, 0.0f, 0.0f };
+        FMOD_VECTOR forward = { forwardX, forwardY, forwardZ };
+        FMOD_VECTOR up = { upX, upY, upZ };
+
+        fmodSystem->get3DListenerAttributes(0, &pos, &vel, nullptr, nullptr);
+        fmodSystem->set3DListenerAttributes(0, &pos, &vel, &forward, &up);
+    }
+
+    bool AudioManager::CreateFMODSystem()
+    {
+        FMOD_RESULT result = FMOD::System_Create(&fmodSystem, FMOD_VERSION);
+        if (result != FMOD_OK)
         {
-            tempBuffer->Release();
-            return true;
-        }
-        
-        return false;
-    }
-
-    bool AudioManager::CreateDirectSound()
-    {
-        HRESULT result = DirectSoundCreate8(nullptr, &directSound, nullptr);
-        return SUCCEEDED(result);
-    }
-
-    bool AudioManager::SetCooperativeLevel()
-    {
-        if (!directSound || !hWnd) return false;
-
-        HRESULT result = directSound->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
-        return SUCCEEDED(result);
-    }
-
-    bool AudioManager::CreatePrimaryBuffer()
-    {
-        if (!directSound) return false;
-
-        DSBUFFERDESC bufferDesc = {};
-        bufferDesc.dwSize = sizeof(DSBUFFERDESC);
-        bufferDesc.dwFlags = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME;
-        bufferDesc.dwBufferBytes = 0;
-        bufferDesc.lpwfxFormat = nullptr;
-
-        HRESULT result = directSound->CreateSoundBuffer(&bufferDesc, &primaryBuffer, nullptr);
-        
-        if (SUCCEEDED(result))
-        {
-            // Set primary buffer format to 44.1kHz, 16-bit, stereo
-            WAVEFORMATEX waveFormat = {};
-            waveFormat.wFormatTag = WAVE_FORMAT_PCM;
-            waveFormat.nChannels = 2;
-            waveFormat.nSamplesPerSec = 44100;
-            waveFormat.wBitsPerSample = 16;
-            waveFormat.nBlockAlign = (waveFormat.nChannels * waveFormat.wBitsPerSample) / 8;
-            waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
-            
-            result = primaryBuffer->SetFormat(&waveFormat);
-            return SUCCEEDED(result);
+            DEBUG_LOG("FMOD error! " + std::string(FMOD_ErrorString(result)));
+            return false;
         }
 
-        return false;
+        // Check FMOD version
+        unsigned int version;
+        result = fmodSystem->getVersion(&version);
+        if (result != FMOD_OK)
+        {
+            DEBUG_LOG("FMOD error! " + std::string(FMOD_ErrorString(result)));
+            return false;
+        }
+
+        if (version < FMOD_VERSION)
+        {
+            DEBUG_LOG("FMOD lib version doesn't match header version!");
+            return false;
+        }
+
+        return true;
     }
 
-    // Helper functions
-    long VolumeToAttenuation(float volume)
+    bool AudioManager::InitializeFMODSystem()
     {
-        if (volume <= 0.0f)
-            return DSBVOLUME_MIN;
-        if (volume >= 1.0f)
-            return DSBVOLUME_MAX;
-        
-        // Convert linear volume to logarithmic attenuation (in centibels)
-        // DirectSound uses attenuation from 0 (loudest) to -10000 (silence)
-        return static_cast<long>(2000.0f * log10f(volume));
-    }
+        // Initialize FMOD with 512 virtual channels
+        FMOD_RESULT result = fmodSystem->init(512, FMOD_INIT_NORMAL, nullptr);
+        if (result != FMOD_OK)
+        {
+            DEBUG_LOG("FMOD error! " + std::string(FMOD_ErrorString(result)));
+            return false;
+        }
 
-    float AttenuationToVolume(long attenuation)
-    {
-        if (attenuation <= DSBVOLUME_MIN)
-            return 0.0f;
-        if (attenuation >= DSBVOLUME_MAX)
-            return 1.0f;
-            
-        // Convert logarithmic attenuation back to linear volume
-        return powf(10.0f, attenuation / 2000.0f);
+        // Set 3D settings
+        result = fmodSystem->set3DSettings(1.0f, 1.0f, 1.0f);
+        if (result != FMOD_OK)
+        {
+            DEBUG_LOG("Failed to set 3D settings: " + std::string(FMOD_ErrorString(result)));
+        }
+
+        return true;
     }
 }

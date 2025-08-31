@@ -58,7 +58,7 @@
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Core;$(ProjectDir)Components;$(ProjectDir)Systems;$(ProjectDir)Managers;$(ProjectDir)Editor;$(ProjectDir)Utils;$(ProjectDir)..\External;$(ProjectDir)..\ThirdParty\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Core;$(ProjectDir)Components;$(ProjectDir)Systems;$(ProjectDir)Managers;$(ProjectDir)Editor;$(ProjectDir)Utils;$(ProjectDir)..\External;$(ProjectDir)..\ThirdParty\ImGui;$(ProjectDir)..\ThirdParty\FMOD\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <!-- <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile> -->
     </ClCompile>
@@ -77,7 +77,7 @@
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Core;$(ProjectDir)Components;$(ProjectDir)Systems;$(ProjectDir)Managers;$(ProjectDir)Editor;$(ProjectDir)Utils;$(ProjectDir)..\External;$(ProjectDir)..\ThirdParty\ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Core;$(ProjectDir)Components;$(ProjectDir)Systems;$(ProjectDir)Managers;$(ProjectDir)Editor;$(ProjectDir)Utils;$(ProjectDir)..\External;$(ProjectDir)..\ThirdParty\ImGui;$(ProjectDir)..\ThirdParty\FMOD\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <!-- <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile> -->
     </ClCompile>
@@ -103,6 +103,7 @@
     <ClInclude Include="Components\Transform.h" />
     <ClInclude Include="Components\SpriteRenderer.h" />
     <ClInclude Include="Components\Animator.h" />
+    <ClInclude Include="Components\AudioSource.h" />
     <ClInclude Include="Components\Collider.h" />
     <ClInclude Include="Components\Rigidbody.h" />
     <ClInclude Include="Components\UI\Canvas.h" />
@@ -110,16 +111,23 @@
     <ClInclude Include="Components\UI\UIButton.h" />
     <ClInclude Include="Managers\SceneManager.h" />
     <ClInclude Include="Managers\ResourceManager.h" />
+    <ClInclude Include="Managers\AudioManager.h" />
     <ClInclude Include="Managers\SimpleAudioManager.h" />
     <ClInclude Include="Systems\RenderSystem.h" />
     <ClInclude Include="Systems\TransformSystem.h" />
     <ClInclude Include="Systems\ScriptSystem.h" />
     <ClInclude Include="Editor\EditorSystem.h" />
     <ClInclude Include="Editor\ImGuiEditorSystem.h" />
+    <ClInclude Include="Editor\SimpleEditorSystem.h" />
+    <ClInclude Include="Editor\UnityStyleEditor.h" />
     <ClInclude Include="Editor\KoreanStrings.h" />
+    <ClInclude Include="Editor\RealUnityEditor.h" />
+    <ClInclude Include="Editor\LightUnityEditor.h" />
+    <ClInclude Include="Editor\KoreanUI.h" />
     <ClInclude Include="Core\TextureManager.h" />
     <ClInclude Include="Resources\Texture2D.h" />
     <ClInclude Include="Resources\AnimationClip.h" />
+    <ClInclude Include="Resources\AudioClip.h" />
     <ClInclude Include="Utils\Vector2.h" />
     <ClInclude Include="Utils\Color.h" />
     <ClInclude Include="Utils\Matrix3x2.h" />
@@ -136,6 +144,7 @@
     <ClCompile Include="Components\Transform.cpp" />
     <ClCompile Include="Components\SpriteRenderer.cpp" />
     <ClCompile Include="Components\Animator.cpp" />
+    <ClCompile Include="Components\AudioSource.cpp" />
     <ClCompile Include="Components\Collider.cpp" />
     <ClCompile Include="Components\Rigidbody.cpp" />
     <ClCompile Include="Components\UI\Canvas.cpp" />
@@ -143,12 +152,17 @@
     <ClCompile Include="Components\UI\UIButton.cpp" />
     <ClCompile Include="Managers\SceneManager.cpp" />
     <ClCompile Include="Managers\ResourceManager.cpp" />
+    <ClCompile Include="Managers\AudioManager.cpp" />
     <ClCompile Include="Managers\SimpleAudioManager.cpp" />
     <ClCompile Include="Systems\RenderSystem.cpp" />
     <ClCompile Include="Systems\TransformSystem.cpp" />
     <ClCompile Include="Systems\ScriptSystem.cpp" />
     <ClCompile Include="Editor\EditorSystem.cpp" />
     <ClCompile Include="Editor\ImGuiEditorSystem.cpp" />
+    <ClCompile Include="Editor\SimpleEditorSystem.cpp" />
+    <ClCompile Include="Editor\UnityStyleEditor.cpp" />
+    <ClCompile Include="Editor\RealUnityEditor.cpp" />
+    <ClCompile Include="Editor\LightUnityEditor.cpp" />
     <ClCompile Include="Editor\KoreanStrings.cpp" />
     <ClCompile Include="..\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="..\ThirdParty\ImGui\imgui_demo.cpp" />
@@ -159,6 +173,8 @@
     <ClCompile Include="..\ThirdParty\ImGui\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="Resources\Texture2D.cpp" />
     <ClCompile Include="Resources\AnimationClip.cpp" />
+    <ClCompile Include="Resources\AudioClip.cpp" />
+    <ClCompile Include="..\ThirdParty\FMOD\lib\fmod_dummy.cpp" />
     <ClCompile Include="Core\TextureManager.cpp" />
     <ClCompile Include="Utils\Vector2.cpp" />
     <ClCompile Include="Utils\Color.cpp" />

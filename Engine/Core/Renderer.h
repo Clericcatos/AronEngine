@@ -72,10 +72,15 @@ namespace AronEngine
 
         void DrawText(const std::wstring& text, const Vector2& position, const Color& color,
                      const std::wstring& fontName = L"Arial", float fontSize = 16.0f);
+        
+        void FillTriangle(const Vector2& p1, const Vector2& p2, const Vector2& p3, const Color& color);
 
         ID2D1DeviceContext6* GetD2DContext() const { return d2dContext.Get(); }
         IDWriteFactory7* GetDWriteFactory() const { return dwriteFactory.Get(); }
         IWICImagingFactory2* GetWICFactory() const { return wicFactory.Get(); }
+        
+        ID3D11Device* GetD3D11Device() const { return d3dDevice.Get(); }
+        ID3D11DeviceContext* GetD3D11DeviceContext() const { return d3dContext.Get(); }
 
         int GetWidth() const { return width; }
         int GetHeight() const { return height; }

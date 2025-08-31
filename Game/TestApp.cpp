@@ -4,11 +4,13 @@
 #include "Core/EngineTime.h"
 #include "Core/GameObject.h"
 #include "Core/TextureManager.h"
-#include "Managers/SimpleAudioManager.h"
-#include "Editor/ImGuiEditorSystem.h"
+#include "Managers/AudioManager.h"
+#include "Editor/LightUnityEditor.h"
 #include "Editor/KoreanStrings.h"
 #include "Components/Transform.h"
 #include "Components/SpriteRenderer.h"
+#include "Components/AudioSource.h"
+#include "Resources/AudioClip.h"
 #include "Utils/Vector2.h"
 #include "Utils/Color.h"
 #include <memory>
@@ -20,19 +22,30 @@ namespace AronEngine
 {
     void TestApp::OnInit()
     {
-        DEBUG_LOG("TestApp initialization completed");
+        DEBUG_LOG("TestApp initialization completed - NEWARONENGINE with FMOD");
         
-        // Try to load a test audio file (you can create a simple WAV or use Windows system sound)
-        testAudio = SimpleAudioManager::GetInstance().LoadAudioClip("C:\\Windows\\Media\\ding.wav");
-        audioLoaded = (testAudio != nullptr && testAudio->IsLoaded());
-        
-        if (audioLoaded)
+        // Try to load a test audio file using FMOD
+        testAudioClip = AudioManager::GetInstance().LoadAudioClip("C:\\Windows\\Media\\ding.wav");
+        if (testAudioClip)
         {
-            DEBUG_LOG("Test audio loaded successfully!");
+            DEBUG_LOG("Test audio loaded successfully with FMOD!");
+            
+            // Create a test GameObject with AudioSource component
+            testObject = std::make_unique<GameObject>();
+            testObject->SetName("AudioTestObject");
+            
+            auto audioSource = testObject->AddComponent<AudioSource>();
+            if (audioSource)
+            {
+                audioSource->SetClip(testAudioClip);
+                audioSource->SetLoop(false);
+                audioSource->SetVolume(0.7f);
+                DEBUG_LOG("AudioSource component created and configured");
+            }
         }
         else
         {
-            DEBUG_LOG("Test audio not found - please place test WAV file");
+            DEBUG_LOG("Test audio not found - using fallback audio file or system sounds");
         }
         
         // Initialize texture manager
@@ -42,7 +55,6 @@ namespace AronEngine
         }
         else
         {
-            // 기본 텍스처들 생성
             auto& texMgr = TextureManager::GetInstance();
             texMgr.CreateSolidColorTexture("default_white", 64, 64, Color::White);
             texMgr.CreateSolidColorTexture("default_red", 64, 64, Color::Red);
@@ -53,14 +65,14 @@ namespace AronEngine
             DEBUG_LOG("Default textures created successfully");
         }
         
-        // Initialize editor system
-        editorSystem = &ImGuiEditorSystem::GetInstance();
-        if (!editorSystem->Initialize(GetWindowHandle(), GetRenderer()))
+        // Initialize light Unity-style editor
+        editorSystem = &LightUnityEditor::GetInstance();
+        if (!editorSystem->Initialize(GetWidth(), GetHeight()))
         {
-            DEBUG_LOG("ImGui Editor System initialization failed");
-            editorSystem = nullptr;
+            DEBUG_LOG("Failed to initialize LightUnityEditor");
         }
         showEditor = true;
+        editorSystem->SetEnabled(true);
         
         // Initialize simple game state
         playerPos = Vector2(350, 400);
@@ -82,6 +94,11 @@ namespace AronEngine
             if (editorSystem)
             {
                 editorSystem->SetEnabled(showEditor);
+                DEBUG_LOG("Editor toggled - showEditor: " + std::string(showEditor ? "true" : "false"));
+            }
+            else
+            {
+                DEBUG_LOG("Editor system is null - cannot toggle");
             }
         }
 
@@ -111,14 +128,26 @@ namespace AronEngine
             playerVel.x *= 0.8f; // Friction
         }
         
-        // Jumping
+        // Jumping with FMOD audio
         if ((GetInput()->GetKeyDown(KeyCode::W) || GetInput()->GetKeyDown(KeyCode::Up) || GetInput()->GetKeyDown(KeyCode::Space)) && !isJumping)
         {
             playerVel.y = -jumpForce;
             isJumping = true;
             
-            // Play jump sound
-            Beep(600, 50);
+            // Play jump sound using FMOD
+            if (testObject)
+            {
+                auto audioSource = testObject->GetComponent<AudioSource>();
+                if (audioSource)
+                {
+                    audioSource->Play();
+                    DEBUG_LOG("Playing jump sound via FMOD!");
+                }
+            }
+            else
+            {
+                Beep(600, 50); // Fallback system beep
+            }
         }
         
         // Apply gravity
@@ -131,7 +160,7 @@ namespace AronEngine
         playerPos.x += playerVel.x * deltaTime;
         playerPos.y += playerVel.y * deltaTime;
         
-        // Ground collision (simple)
+        // Ground collision
         const float groundY = 400.0f;
         if (playerPos.y >= groundY)
         {
@@ -144,154 +173,115 @@ namespace AronEngine
         if (playerPos.x < 0) playerPos.x = 0;
         if (playerPos.x > GetWidth() - 64) playerPos.x = GetWidth() - 64;
 
-        // Test audio playback  
+        // Test audio controls
         if (GetInput()->GetKeyDown(KeyCode::T))
         {
-            DEBUG_LOG("Playing test audio (Space key pressed)");
-            
-            // Try multiple Windows system sounds
-            bool soundPlayed = false;
-            
-            // Try Windows system beep first (simplest)
-            if (Beep(800, 200)) // 800Hz for 200ms
+            if (testObject)
             {
-                DEBUG_LOG("System beep played!");
-                soundPlayed = true;
-            }
-            
-            // Try Windows system error sound
-            if (!soundPlayed)
-            {
-                if (MessageBeep(MB_OK))
+                auto audioSource = testObject->GetComponent<AudioSource>();
+                if (audioSource && testAudioClip)
                 {
-                    DEBUG_LOG("System message beep played!");
-                    soundPlayed = true;
+                    audioSource->Play();
+                    DEBUG_LOG("Playing audio via FMOD (T key)!");
                 }
             }
-            
-            // Try PlaySound with Windows system sounds
-            if (!soundPlayed)
+            else
             {
-                // Try different Windows system sound paths
-                std::vector<std::string> soundPaths = {
-                    "C:\\Windows\\Media\\ding.wav",
-                    "C:\\Windows\\Media\\chord.wav", 
-                    "C:\\Windows\\Media\\Windows Ding.wav",
-                    "C:\\Windows\\Media\\notify.wav"
-                };
-                
-                for (const auto& path : soundPaths)
-                {
-                    if (SimpleAudioManager::GetInstance().PlaySound(path, true))
-                    {
-                        DEBUG_LOG("Played sound: " + path);
-                        soundPlayed = true;
-                        break;
-                    }
-                }
-            }
-            
-            if (!soundPlayed)
-            {
-                DEBUG_LOG("No sound could be played - check Windows Media folder");
-                // Last resort: Windows default beep
-                MessageBeep(0xFFFFFFFF);
+                Beep(800, 200);
+                DEBUG_LOG("No FMOD audio - using fallback beep");
             }
         }
-
+        
         if (GetInput()->GetKeyDown(KeyCode::M))
         {
-            // Test stopping all sounds
-            SimpleAudioManager::GetInstance().StopAllSounds();
-            DEBUG_LOG("All sounds stopped");
+            if (testObject)
+            {
+                auto audioSource = testObject->GetComponent<AudioSource>();
+                if (audioSource)
+                {
+                    audioSource->Stop();
+                    DEBUG_LOG("Audio stopped");
+                }
+            }
         }
 
         if (GetInput()->GetKeyDown(KeyCode::L))
         {
-            DEBUG_LOG("L key pressed - Testing direct PlaySound call");
-            
-            // Direct PlaySound API call for testing
-            BOOL result = PlaySoundA("SystemDefault", nullptr, SND_ALIAS | SND_ASYNC);
-            if (result)
+            if (testObject)
             {
-                DEBUG_LOG("Direct PlaySound successful!");
-            }
-            else
-            {
-                DEBUG_LOG("Direct PlaySound failed, error: " + std::to_string(GetLastError()));
-                
-                // Try system sounds
-                PlaySoundA("SystemQuestion", nullptr, SND_ALIAS | SND_ASYNC);
+                auto audioSource = testObject->GetComponent<AudioSource>();
+                if (audioSource)
+                {
+                    bool currentLoop = audioSource->GetLoop();
+                    audioSource->SetLoop(!currentLoop);
+                    DEBUG_LOG("Loop mode: " + std::string(currentLoop ? "OFF" : "ON"));
+                }
             }
         }
         
-        if (GetInput()->GetKeyDown(KeyCode::B))
+        // Update test object
+        if (testObject)
         {
-            DEBUG_LOG("B key pressed - Testing Beep");
-            
-            // Test different beep frequencies
-            Beep(1000, 100); // 1000Hz for 100ms
-            Sleep(150);
-            Beep(1500, 100); // 1500Hz for 100ms  
-            Sleep(150);
-            Beep(2000, 100); // 2000Hz for 100ms
+            testObject->Update(deltaTime);
         }
     }
 
     void TestApp::OnRender()
     {
-        auto renderer = GetRenderer();
+        Renderer* renderer = GetRenderer();
         
-        // Begin ImGui frame if editor is enabled
+        // Light Unity-style editor를 먼저 렌더링
         if (editorSystem && showEditor)
         {
-            editorSystem->BeginFrame();
+            // 전체 화면을 밝은 회색으로 채우기
+            renderer->FillRectangle(Vector2(0, 0), Vector2((float)GetWidth(), (float)GetHeight()), Color(0.95f, 0.95f, 0.95f));
+            
+            auto mousePos = GetInput()->GetMousePosition();
+            bool leftClick = GetInput()->GetKey(KeyCode::MouseLeft);
+            bool rightClick = GetInput()->GetKey(KeyCode::MouseRight);
+            
+            editorSystem->HandleInput(mousePos, leftClick, rightClick);
+            
+            // 키보드 입력 처리
+            bool shift = GetInput()->GetKey(KeyCode::LeftShift) || GetInput()->GetKey(KeyCode::RightShift);
+            bool ctrl = GetInput()->GetKey(KeyCode::LeftControl) || GetInput()->GetKey(KeyCode::RightControl);
+            
+            for (int key = 0; key < 256; key++)
+            {
+                if (GetInput()->GetKeyDown((KeyCode)key))
+                {
+                    editorSystem->HandleKeyInput(key, shift, ctrl);
+                }
+            }
+            
+            // Render scene objects
+            auto& sceneObjects = editorSystem->GetSceneObjects();
+            for (const auto& obj : sceneObjects)
+            {
+                RenderSceneObject(obj.get(), renderer);
+            }
+            
+            // Render light editor UI
+            editorSystem->Render(renderer);
+            return; // 에디터만 표시하고 리턴
         }
         
-        renderer->DrawText(L"AronEngine", Vector2(50, 50), Color::White, L"Arial", 32.0f);
-        // 한글 문자열을 wstring으로 변환하는 유틸리티
-        auto toWString = [](const char* utf8str) {
-            int wchars_num = MultiByteToWideChar(CP_UTF8, 0, utf8str, -1, NULL, 0);
-            wchar_t* wstr = new wchar_t[wchars_num];
-            MultiByteToWideChar(CP_UTF8, 0, utf8str, -1, wstr, wchars_num);
-            std::wstring result(wstr);
-            delete[] wstr;
-            return result;
-        };
-
-        renderer->DrawText(L"F1 - Debug Info", Vector2(50, 100), Color::Gray, L"Arial", 16.0f);
-        renderer->DrawText(L"ESC - Exit", Vector2(50, 120), Color::Gray, L"Arial", 16.0f);
+        // 에디터가 꺼져있을 때만 게임 화면 표시
+        // Instructions
+        renderer->DrawText(L"NEWARONENGINE with FMOD Audio", Vector2(20, 20), Color::Yellow, L"Arial", 16.0f);
+        renderer->DrawText(L"Controls:", Vector2(20, 50), Color::White, L"Arial", 14.0f);
+        renderer->DrawText(L"WASD/Arrows: Move & Jump", Vector2(20, 70), Color::Cyan, L"Arial", 12.0f);
+        renderer->DrawText(L"T: Play Sound", Vector2(20, 90), Color::Cyan, L"Arial", 12.0f);
+        renderer->DrawText(L"M: Stop Sound", Vector2(20, 110), Color::Cyan, L"Arial", 12.0f);
+        renderer->DrawText(L"L: Toggle Loop", Vector2(20, 130), Color::Cyan, L"Arial", 12.0f);
+        renderer->DrawText(L"E: Toggle Editor", Vector2(20, 150), Color::Cyan, L"Arial", 12.0f);
+        renderer->DrawText(L"ESC: Exit", Vector2(20, 170), Color::Cyan, L"Arial", 12.0f);
         
-        // Game controls
-        renderer->DrawText(L"WASD/Arrows: Move Player", Vector2(50, 150), Color::Green, L"Arial", 16.0f);
-        renderer->DrawText(L"SPACE/W/UP: Jump", Vector2(50, 170), Color::Green, L"Arial", 16.0f);
-        renderer->DrawText(L"E: Toggle Editor", Vector2(50, 190), Color::Green, L"Arial", 16.0f);
-        renderer->DrawText(L"T: Test Audio", Vector2(50, 210), Color::Green, L"Arial", 16.0f);
-        renderer->DrawText(L"B: Test Beep", Vector2(50, 230), Color::Green, L"Arial", 16.0f);
-        
-        if (audioLoaded)
-        {
-            renderer->DrawText(L"Audio System Ready!", Vector2(50, 260), Color::Yellow, L"Arial", 16.0f);
-        }
-        else
-        {
-            renderer->DrawText(L"Using System Sound", Vector2(50, 260), Color::Yellow, L"Arial", 16.0f);
-        }
-        
-        // Editor status
-        std::wstring editorStatus = showEditor ? L"Editor: ON (Press E to toggle)" : L"Editor: OFF (Press E to toggle)";
-        renderer->DrawText(editorStatus, Vector2(50, 280), Color::Cyan, L"Arial", 16.0f);
-
-        // Draw some test sprites/objects
-        renderer->FillRectangle(Vector2(400, 300), Vector2(64, 64), Color::Red);     // Simple red sprite
-        renderer->FillRectangle(Vector2(500, 300), Vector2(64, 64), Color::Green);   // Simple green sprite
-        renderer->FillRectangle(Vector2(600, 300), Vector2(64, 64), Color::Blue);    // Simple blue sprite
-        
-        // Draw the player character at current position
+        // Simple character rendering
         Vector2 charPos = playerPos;
         
         // Head
-        renderer->FillRectangle(charPos + Vector2(20, 0), Vector2(24, 24), Color(1.0f, 0.8f, 0.6f)); // Skin color
+        renderer->FillRectangle(charPos + Vector2(20, 0), Vector2(24, 24), Color(1.0f, 0.8f, 0.6f));
         
         // Eyes
         renderer->FillRectangle(charPos + Vector2(24, 6), Vector2(4, 4), Color::Black);
@@ -304,24 +294,18 @@ namespace AronEngine
         renderer->FillRectangle(charPos + Vector2(8, 28), Vector2(12, 24), Color(1.0f, 0.8f, 0.6f));
         renderer->FillRectangle(charPos + Vector2(44, 28), Vector2(12, 24), Color(1.0f, 0.8f, 0.6f));
         
-        // Legs  
+        // Legs
         renderer->FillRectangle(charPos + Vector2(20, 64), Vector2(10, 32), Color::Green);
         renderer->FillRectangle(charPos + Vector2(34, 64), Vector2(10, 32), Color::Green);
-        
-        // Test animation - moving circle
-        static float animTime = 0.0f;
-        animTime += GetTime()->GetDeltaTime();
-        float xOffset = sin(animTime * 2.0f) * 100.0f;
-        renderer->FillCircle(Vector2(700 + xOffset, 400), 20, Color::Yellow);
         
         // Draw ground line
         renderer->DrawLine(Vector2(0, 464), Vector2((float)GetWidth(), 464), Color::Gray, 2.0f);
         
         // Player status
-        std::wstring posText = std::wstring(L"Player: ") + L"(" + std::to_wstring((int)playerPos.x) + L", " + std::to_wstring((int)playerPos.y) + L")";
+        std::wstring posText = L"Player: (" + std::to_wstring((int)playerPos.x) + L", " + std::to_wstring((int)playerPos.y) + L")";
         renderer->DrawText(posText, Vector2(GetWidth() - 300, 50), Color::Cyan, L"Arial", 14.0f);
         
-        std::wstring velText = std::wstring(L"Velocity: ") + L"(" + std::to_wstring((int)playerVel.x) + L", " + std::to_wstring((int)playerVel.y) + L")";
+        std::wstring velText = L"Velocity: (" + std::to_wstring((int)playerVel.x) + L", " + std::to_wstring((int)playerVel.y) + L")";
         renderer->DrawText(velText, Vector2(GetWidth() - 300, 70), Color::Cyan, L"Arial", 14.0f);
         
         renderer->DrawText(isJumping ? L"Status: Jumping" : L"Status: On Ground", 
@@ -330,75 +314,105 @@ namespace AronEngine
         auto mousePos = GetInput()->GetMousePosition();
         renderer->FillCircle(mousePos, 5, Color::Magenta);
         
-        std::wstring mousePosStr = std::wstring(L"Mouse: ") + L"(" + std::to_wstring((int)mousePos.x) + L", " + std::to_wstring((int)mousePos.y) + L")";
+        std::wstring mousePosStr = L"Mouse: (" + std::to_wstring((int)mousePos.x) + L", " + std::to_wstring((int)mousePos.y) + L")";
         renderer->DrawText(mousePosStr, Vector2(mousePos.x + 10, mousePos.y - 20), Color::White, L"Arial", 12.0f);
         
-        // Render GameObjects created in editor
-        if (editorSystem && showEditor)
+        // Audio status
+        if (testObject)
         {
-            auto& gameObjects = editorSystem->GetGameObjects();
-            for (const auto& gameObject : gameObjects)
+            auto audioSource = testObject->GetComponent<AudioSource>();
+            if (audioSource)
             {
-                if (gameObject->IsActive())
-                {
-                    RenderGameObject(gameObject.get(), renderer);
-                }
+                bool isPlaying = audioSource->IsPlaying();
+                bool isLooping = audioSource->GetLoop();
+                float volume = audioSource->GetVolume();
+                
+                renderer->DrawText(L"FMOD Audio Status:", Vector2(20, 200), Color::Green, L"Arial", 14.0f);
+                renderer->DrawText(isPlaying ? L"Playing: YES" : L"Playing: NO", 
+                                 Vector2(20, 220), isPlaying ? Color::Green : Color::Red, L"Arial", 12.0f);
+                renderer->DrawText(isLooping ? L"Loop: YES" : L"Loop: NO", 
+                                 Vector2(20, 240), isLooping ? Color::Green : Color::White, L"Arial", 12.0f);
+                
+                std::wstring volText = L"Volume: " + std::to_wstring((int)(volume * 100)) + L"%";
+                renderer->DrawText(volText, Vector2(20, 260), Color::White, L"Arial", 12.0f);
             }
         }
-        
-        // Render ImGui editor if enabled
-        if (editorSystem && showEditor)
+        else
         {
-            editorSystem->Render();
-            editorSystem->EndFrame();
+            renderer->DrawText(L"FMOD Audio: Not Available", Vector2(20, 200), Color::Red, L"Arial", 14.0f);
         }
     }
 
     void TestApp::OnShutdown()
     {
+        DEBUG_LOG("TestApp shutting down");
+        
+        if (testObject)
+        {
+            testObject.reset();
+        }
+        
+        testAudioClip.reset();
+        
         if (editorSystem)
         {
             editorSystem->Shutdown();
         }
-        DEBUG_LOG("TestApp shutting down");
+        
+        TextureManager::GetInstance().Shutdown();
     }
 
-    void TestApp::RenderGameObject(GameObject* gameObject, Renderer* renderer)
+    void TestApp::RenderSceneObject(GameObject* gameObject, Renderer* renderer)
     {
-        if (!gameObject || !gameObject->IsActive()) return;
-        
-        Transform* transform = gameObject->GetComponent<Transform>();
-        SpriteRenderer* spriteRenderer = gameObject->GetComponent<SpriteRenderer>();
-        
+        if (!gameObject) return;
+
+        auto transform = gameObject->GetComponent<Transform>();
         if (!transform) return;
         
-        Vector2 position = transform->GetWorldPosition();
-        Vector2 scale = transform->GetScale();
-        float rotation = transform->GetRotation();
-        
+        Vector2 position = transform->GetPosition();
+        auto spriteRenderer = gameObject->GetComponent<SpriteRenderer>();
+
         if (spriteRenderer)
         {
+            // Render sprite
             Vector2 size = spriteRenderer->GetSize();
-            Color color = spriteRenderer->GetColor();
-            Vector2 finalSize = Vector2(size.x * scale.x, size.y * scale.y);
+            renderer->FillRectangle(position, size, spriteRenderer->GetColor());
             
-            std::shared_ptr<Sprite> gameSprite = spriteRenderer->GetSprite();
-            if (gameSprite && gameSprite->texture)
+            // Unity-style selection outline
+            if (editorSystem && editorSystem->GetSelectedObject() == gameObject)
             {
-                Vector2 renderPos = position - finalSize * 0.5f;
-                renderer->DrawTexture(gameSprite->texture, renderPos, finalSize, color);
+                Color selectionColor(1.0f, 0.6f, 0.0f); // Unity orange
+                renderer->DrawRectangle(position - Vector2(2, 2), size + Vector2(4, 4), selectionColor, 3.0f);
+                
+                // Selection corners
+                float cornerSize = 8.0f;
+                Vector2 corners[4] = {
+                    position - Vector2(cornerSize/2, cornerSize/2),
+                    position + Vector2(size.x - cornerSize/2, -cornerSize/2),
+                    position + Vector2(-cornerSize/2, size.y - cornerSize/2),
+                    position + size - Vector2(cornerSize/2, cornerSize/2)
+                };
+                
+                for (int i = 0; i < 4; i++)
+                {
+                    renderer->FillRectangle(corners[i], Vector2(cornerSize, cornerSize), selectionColor);
+                }
             }
-            else
+        }
+        else
+        {
+            // Empty GameObject - clean gizmo
+            Vector2 center = position;
+            
+            // Small cross gizmo (Unity-style)
+            renderer->DrawLine(center - Vector2(8, 0), center + Vector2(8, 0), Color(0.8f, 0.2f, 0.2f), 2.0f); // X red
+            renderer->DrawLine(center - Vector2(0, 8), center + Vector2(0, 8), Color(0.2f, 0.8f, 0.2f), 2.0f); // Y green
+            
+            // Selection highlight
+            if (editorSystem && editorSystem->GetSelectedObject() == gameObject)
             {
-                if (gameObject->GetName().find("Circle") != std::string::npos)
-                {
-                    float radius = (std::min)(finalSize.x, finalSize.y) * 0.5f;
-                    renderer->FillCircle(position, radius, color);
-                }
-                else
-                {
-                    renderer->FillRectangle(position - finalSize * 0.5f, finalSize, color);
-                }
+                renderer->FillCircle(center, 12, Color(1.0f, 0.6f, 0.0f, 0.3f));
+                renderer->DrawCircle(center, 12, Color(1.0f, 0.6f, 0.0f), 2.0f);
             }
         }
     }

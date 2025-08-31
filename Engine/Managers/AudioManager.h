@@ -1,13 +1,17 @@
 #pragma once
 #include "Core/Singleton.h"
-#include <dsound.h>
 #include <memory>
 #include <unordered_map>
 #include <string>
 
-#pragma comment(lib, "dsound.lib")
-#pragma comment(lib, "dxguid.lib")
-#pragma comment(lib, "winmm.lib")
+// Forward declarations for FMOD
+namespace FMOD
+{
+    class System;
+    class Sound;
+    class Channel;
+    class ChannelGroup;
+}
 
 namespace AronEngine
 {
@@ -18,11 +22,10 @@ namespace AronEngine
         friend class Singleton<AudioManager>;
 
     private:
-        IDirectSound8* directSound;
-        IDirectSoundBuffer* primaryBuffer;
-        HWND hWnd;
+        FMOD::System* fmodSystem;
+        FMOD::ChannelGroup* masterGroup;
         bool initialized;
-
+        
         // Cache loaded audio clips
         std::unordered_map<std::string, std::shared_ptr<AudioClip>> audioClips;
 
@@ -31,31 +34,31 @@ namespace AronEngine
         virtual ~AudioManager();
 
     public:
-        bool Initialize(HWND windowHandle);
+        bool Initialize(void* windowHandle = nullptr);
         void Shutdown();
+        void Update(); // Call this every frame to update FMOD
 
         // Audio clip management
-        std::shared_ptr<AudioClip> LoadAudioClip(const std::string& filePath);
+        std::shared_ptr<AudioClip> LoadAudioClip(const std::string& filePath, bool is3D = false, bool isLooping = false, bool isStream = false);
         void UnloadAudioClip(const std::string& filePath);
         void UnloadAllAudioClips();
 
-        // DirectSound access
-        IDirectSound8* GetDirectSound() const { return directSound; }
+        // FMOD system access
+        FMOD::System* GetFMODSystem() const { return fmodSystem; }
+        FMOD::ChannelGroup* GetMasterChannelGroup() const { return masterGroup; }
 
         // Volume control (0.0f to 1.0f)
         void SetMasterVolume(float volume);
         float GetMasterVolume() const;
 
-        // Audio format support check
-        bool IsFormatSupported(const WAVEFORMATEX& format) const;
+        // Utility functions
+        void Set3DListenerPosition(float x, float y, float z);
+        void Set3DListenerVelocity(float vx, float vy, float vz);
+        void Set3DListenerOrientation(float forwardX, float forwardY, float forwardZ, 
+                                       float upX, float upY, float upZ);
 
     private:
-        bool CreateDirectSound();
-        bool SetCooperativeLevel();
-        bool CreatePrimaryBuffer();
+        bool CreateFMODSystem();
+        bool InitializeFMODSystem();
     };
-
-    // Helper function to convert volume (0.0f to 1.0f) to DirectSound attenuation
-    long VolumeToAttenuation(float volume);
-    float AttenuationToVolume(long attenuation);
 }

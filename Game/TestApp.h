@@ -1,23 +1,23 @@
 #pragma once
 #include "Core/EngineApp.h"
+#include "Core/GameObject.h"
 #include "Utils/Vector2.h"
 #include <memory>
 
 namespace AronEngine
 {
-    class SimpleAudioClip;
-    class ImGuiEditorSystem;
-    class GameObject;
+    class AudioClip;
+    class LightUnityEditor;
     class Renderer;
     
     class TestApp : public EngineApp
     {
     private:
-        std::shared_ptr<SimpleAudioClip> testAudio;
-        bool audioLoaded;
+        std::shared_ptr<AudioClip> testAudioClip;
+        std::unique_ptr<GameObject> testObject;
         
         // Editor system
-        ImGuiEditorSystem* editorSystem;
+        LightUnityEditor* editorSystem;
         bool showEditor;
         
         // Simple game state
@@ -35,6 +35,6 @@ namespace AronEngine
         virtual void OnShutdown() override;
         
     private:
-        void RenderGameObject(GameObject* gameObject, Renderer* renderer);
+        void RenderSceneObject(GameObject* gameObject, Renderer* renderer);
     };
 }

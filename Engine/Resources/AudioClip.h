@@ -2,7 +2,14 @@
 #include "Core/Object.h"
 #include <string>
 #include <memory>
-#include <dsound.h>
+
+// Forward declarations for FMOD
+namespace FMOD
+{
+    class Sound;
+    class Channel;
+    class System;
+}
 
 namespace AronEngine
 {
@@ -10,7 +17,9 @@ namespace AronEngine
     {
         WAV,
         MP3,
-        OGG
+        OGG,
+        FLAC,
+        UNKNOWN
     };
 
     class AudioClip : public Object
@@ -18,21 +27,26 @@ namespace AronEngine
     private:
         std::string filePath;
         AudioFormat format;
-        IDirectSoundBuffer8* soundBuffer;
+        FMOD::Sound* fmodSound;
         
         // Audio properties
         float length;           // Duration in seconds
         int frequency;          // Sample rate
         int channels;           // Mono=1, Stereo=2
         bool isLoaded;
+        bool is3D;
+        bool isLooping;
+        bool isStream;
 
     public:
         AudioClip();
         AudioClip(const std::string& path);
         virtual ~AudioClip();
 
+        DECLARE_OBJECT_TYPE(AudioClip)
+
         // Loading
-        bool LoadFromFile(const std::string& path);
+        bool LoadFromFile(const std::string& path, bool is3D = false, bool isLooping = false, bool isStream = false);
         void Unload();
 
         // Properties
@@ -40,14 +54,17 @@ namespace AronEngine
         int GetFrequency() const { return frequency; }
         int GetChannels() const { return channels; }
         bool IsLoaded() const { return isLoaded; }
+        bool Is3D() const { return is3D; }
+        bool IsLooping() const { return isLooping; }
+        bool IsStream() const { return isStream; }
         const std::string& GetFilePath() const { return filePath; }
         AudioFormat GetFormat() const { return format; }
 
-        // DirectSound access
-        IDirectSoundBuffer8* GetSoundBuffer() const { return soundBuffer; }
+        // FMOD access
+        FMOD::Sound* GetFMODSound() const { return fmodSound; }
 
     private:
-        bool LoadWAV(const std::string& path);
         AudioFormat DetectFormat(const std::string& path);
+        void UpdateAudioProperties();
     };
 }

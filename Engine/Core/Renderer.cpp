@@ -481,4 +481,25 @@ namespace AronEngine
             &sourceRect
         );
     }
+    
+    void Renderer::FillTriangle(const Vector2& p1, const Vector2& p2, const Vector2& p3, const Color& color)
+    {
+        ComPtr<ID2D1PathGeometry> pathGeometry;
+        d2dFactory->CreatePathGeometry(&pathGeometry);
+        
+        ComPtr<ID2D1GeometrySink> sink;
+        pathGeometry->Open(&sink);
+        
+        sink->BeginFigure(D2D1::Point2F(p1.x, p1.y), D2D1_FIGURE_BEGIN_FILLED);
+        sink->AddLine(D2D1::Point2F(p2.x, p2.y));
+        sink->AddLine(D2D1::Point2F(p3.x, p3.y));
+        sink->EndFigure(D2D1_FIGURE_END_CLOSED);
+        
+        sink->Close();
+        
+        ComPtr<ID2D1SolidColorBrush> brush;
+        d2dContext->CreateSolidColorBrush(D2D1::ColorF(color.r, color.g, color.b, color.a), &brush);
+        
+        d2dContext->FillGeometry(pathGeometry.Get(), brush.Get());
+    }
 }

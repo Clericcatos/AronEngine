@@ -3,12 +3,16 @@
 #include "../Resources/AudioClip.h"
 #include "../Core/GameObject.h"
 #include "../Components/Transform.h"
+#include "../Managers/AudioManager.h"
+#include "../../ThirdParty/FMOD/inc/fmod.hpp"
+#include "../../ThirdParty/FMOD/inc/fmod_errors.h"
 
 namespace AronEngine
 {
     AudioSource::AudioSource()
         : Component()
         , clip(nullptr)
+        , channel(nullptr)
         , isPlaying(false)
         , isPaused(false)
         , loop(false)
@@ -37,9 +41,21 @@ namespace AronEngine
     {
         Component::Update(deltaTime);
         
-        if (isPlaying && !isPaused && spatialBlend > 0.0f)
+        if (channel && spatialBlend > 0.0f)
         {
             UpdateSpatialAudio();
+        }
+
+        // Check if still playing
+        if (channel)
+        {
+            bool playing = false;
+            FMOD_RESULT result = channel->isPlaying(&playing);
+            if (result != FMOD_OK || !playing)
+            {
+                isPlaying = false;
+                channel = nullptr;
+            }
         }
     }
 
@@ -63,38 +79,45 @@ namespace AronEngine
             return;
         }
 
-        auto soundBuffer = clip->GetSoundBuffer();
-        if (!soundBuffer)
+        FMOD::Sound* sound = clip->GetFMODSound();
+        if (!sound)
         {
-            DEBUG_LOG("AudioSource::Play() - No sound buffer!");
+            DEBUG_LOG("AudioSource::Play() - No FMOD sound!");
             return;
         }
 
+        FMOD::System* fmodSystem = AudioManager::GetInstance().GetFMODSystem();
+        if (!fmodSystem)
+        {
+            DEBUG_LOG("AudioSource::Play() - FMOD system not initialized!");
+            return;
+        }
+
+        // Stop current playback if any
+        Stop();
+
         DEBUG_LOG("Playing audio clip: " + clip->GetFilePath());
         
-        // Set volume
-        long attenuation = static_cast<long>(2000.0f * log10f(std::max(0.001f, volume * (mute ? 0.0f : 1.0f))));
-        attenuation = std::max(DSBVOLUME_MIN, std::min(DSBVOLUME_MAX, attenuation));
-        soundBuffer->SetVolume(attenuation);
-
-        // Set looping
-        DWORD playFlags = loop ? DSBPLAY_LOOPING : 0;
-        
         // Play the sound
-        HRESULT result = soundBuffer->Play(0, 0, playFlags);
-        if (SUCCEEDED(result))
+        FMOD_RESULT result = fmodSystem->playSound(sound, nullptr, true, &channel);
+        if (result != FMOD_OK)
         {
-            isPlaying = true;
-            isPaused = false;
-            DEBUG_LOG("Audio playing successfully");
+            DEBUG_LOG("Failed to play sound: " + std::string(FMOD_ErrorString(result)));
+            return;
         }
-        else
-        {
-            DEBUG_LOG("Failed to play audio clip");
-        }
+
+        // Apply settings
+        ApplySettings();
+
+        // Start playback
+        channel->setPaused(false);
+        isPlaying = true;
+        isPaused = false;
+        
+        DEBUG_LOG("Audio playing successfully");
     }
 
-    void AudioSource::PlayOneShot(std::shared_ptr<AudioClip> clipToPlay)
+    void AudioSource::PlayOneShot(std::shared_ptr<AudioClip> clipToPlay, float volumeScale)
     {
         if (!clipToPlay)
         {
@@ -108,17 +131,64 @@ namespace AronEngine
             return;
         }
 
+        FMOD::Sound* sound = clipToPlay->GetFMODSound();
+        if (!sound)
+        {
+            DEBUG_LOG("AudioSource::PlayOneShot() - No FMOD sound!");
+            return;
+        }
+
+        FMOD::System* fmodSystem = AudioManager::GetInstance().GetFMODSystem();
+        if (!fmodSystem)
+        {
+            DEBUG_LOG("AudioSource::PlayOneShot() - FMOD system not initialized!");
+            return;
+        }
+
         DEBUG_LOG("Playing one-shot audio: " + clipToPlay->GetFilePath());
         
-        // TODO: Implement one-shot playback that doesn't affect main clip
-        // This should play the sound once without changing the current clip
+        FMOD::Channel* oneShotChannel = nullptr;
+        FMOD_RESULT result = fmodSystem->playSound(sound, nullptr, true, &oneShotChannel);
+        if (result != FMOD_OK)
+        {
+            DEBUG_LOG("Failed to play one-shot: " + std::string(FMOD_ErrorString(result)));
+            return;
+        }
+
+        // Apply volume with scale
+        oneShotChannel->setVolume(volume * volumeScale * (mute ? 0.0f : 1.0f));
+        
+        // Apply pitch
+        oneShotChannel->setPitch(pitch);
+        
+        // Apply 3D settings if needed
+        if (spatialBlend > 0.0f && clipToPlay->Is3D())
+        {
+            auto transform = GetGameObject()->GetComponent<Transform>();
+            if (transform)
+            {
+                Vector2 pos = transform->GetPosition();
+                FMOD_VECTOR position = { pos.x, pos.y, 0.0f };
+                FMOD_VECTOR velocity = { 0.0f, 0.0f, 0.0f };
+                
+                oneShotChannel->set3DAttributes(&position, &velocity);
+                oneShotChannel->set3DMinMaxDistance(minDistance, maxDistance);
+                
+                // Mix between 2D and 3D
+                float blend2D = 1.0f - spatialBlend;
+                oneShotChannel->set3DLevel(spatialBlend);
+            }
+        }
+
+        // Start playback
+        oneShotChannel->setPaused(false);
     }
 
     void AudioSource::Pause()
     {
-        if (isPlaying && !isPaused && clip && clip->GetSoundBuffer())
+        if (channel && isPlaying && !isPaused)
         {
-            clip->GetSoundBuffer()->Stop();
+            channel->setPaused(true);
             isPaused = true;
             DEBUG_LOG("Audio paused");
         }
@@ -126,10 +196,9 @@ namespace AronEngine
 
     void AudioSource::UnPause()
     {
-        if (isPlaying && isPaused && clip && clip->GetSoundBuffer())
+        if (channel && isPlaying && isPaused)
         {
-            DWORD playFlags = loop ? DSBPLAY_LOOPING : 0;
-            clip->GetSoundBuffer()->Play(0, 0, playFlags);
+            channel->setPaused(false);
             isPaused = false;
             DEBUG_LOG("Audio unpaused");
         }
@@ -137,10 +206,10 @@ namespace AronEngine
 
     void AudioSource::Stop()
     {
-        if (isPlaying && clip && clip->GetSoundBuffer())
+        if (channel)
         {
-            clip->GetSoundBuffer()->Stop();
-            clip->GetSoundBuffer()->SetCurrentPosition(0);
+            channel->stop();
+            channel = nullptr;
             isPlaying = false;
             isPaused = false;
             DEBUG_LOG("Audio stopped");
@@ -167,22 +236,113 @@ namespace AronEngine
         }
     }
 
+    void AudioSource::SetVolume(float vol)
+    {
+        volume = std::max(0.0f, std::min(1.0f, vol));
+        if (channel)
+        {
+            channel->setVolume(volume * (mute ? 0.0f : 1.0f));
+        }
+    }
+
+    void AudioSource::SetPitch(float p)
+    {
+        pitch = std::max(0.1f, std::min(3.0f, p));
+        if (channel)
+        {
+            channel->setPitch(pitch);
+        }
+    }
+
+    void AudioSource::SetLoop(bool shouldLoop)
+    {
+        loop = shouldLoop;
+        if (channel)
+        {
+            channel->setMode(shouldLoop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
+        }
+    }
+
+    void AudioSource::SetMute(bool shouldMute)
+    {
+        mute = shouldMute;
+        if (channel)
+        {
+            channel->setVolume(volume * (mute ? 0.0f : 1.0f));
+        }
+    }
+
+    bool AudioSource::IsPlaying() const
+    {
+        if (!channel) return false;
+        
+        bool playing = false;
+        FMOD_RESULT result = channel->isPlaying(&playing);
+        return (result == FMOD_OK) && playing;
+    }
+
+    float AudioSource::GetTime() const
+    {
+        if (!channel) return 0.0f;
+        
+        unsigned int position = 0;
+        FMOD_RESULT result = channel->getPosition(&position, FMOD_TIMEUNIT_MS);
+        if (result == FMOD_OK)
+        {
+            return position / 1000.0f; // Convert to seconds
+        }
+        return 0.0f;
+    }
+
+    void AudioSource::SetTime(float time)
+    {
+        if (!channel) return;
+        
+        unsigned int position = static_cast<unsigned int>(time * 1000.0f); // Convert to milliseconds
+        channel->setPosition(position, FMOD_TIMEUNIT_MS);
+    }
+
     void AudioSource::UpdateSpatialAudio()
     {
+        if (!channel) return;
+        
         // Get position from Transform component
         auto transform = GetGameObject()->GetComponent<Transform>();
         if (!transform) return;
 
         Vector2 position = transform->GetPosition();
         
-        // TODO: Implement 3D audio positioning using DirectSound3D
-        // Calculate distance to listener, apply volume falloff, etc.
+        // Update 3D position
+        FMOD_VECTOR pos = { position.x, position.y, 0.0f };
+        FMOD_VECTOR vel = { 0.0f, 0.0f, 0.0f }; // TODO: Calculate velocity if needed
         
-        // For now, just log the position update
-        static int frameCount = 0;
-        if (frameCount++ % 60 == 0)  // Log every 60 frames to avoid spam
+        channel->set3DAttributes(&pos, &vel);
+    }
+
+    void AudioSource::ApplySettings()
+    {
+        if (!channel) return;
+
+        // Volume and mute
+        channel->setVolume(volume * (mute ? 0.0f : 1.0f));
+        
+        // Pitch
+        channel->setPitch(pitch);
+        
+        // Loop
+        channel->setMode(loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
+        
+        // Priority
+        channel->setPriority(priority);
+        
+        // 3D settings
+        if (clip && clip->Is3D() && spatialBlend > 0.0f)
         {
-            DEBUG_LOG("3D Audio position update: (" + std::to_string(position.x) + ", " + std::to_string(position.y) + ")");
+            channel->set3DMinMaxDistance(minDistance, maxDistance);
+            channel->set3DLevel(spatialBlend);
+            
+            // Update position immediately
+            UpdateSpatialAudio();
         }
     }
 }
