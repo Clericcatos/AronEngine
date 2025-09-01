@@ -502,4 +502,51 @@ namespace AronEngine
         
         d2dContext->FillGeometry(pathGeometry.Get(), brush.Get());
     }
+
+    void Renderer::Begin3DRender()
+    {
+        d2dContext->EndDraw();
+        
+        ComPtr<ID3D11RenderTargetView> renderTargetView;
+        ComPtr<ID3D11Texture2D> backBuffer;
+        
+        swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer));
+        d3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, &renderTargetView);
+        
+        d3dContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
+        
+        D3D11_VIEWPORT viewport = {};
+        viewport.Width = static_cast<float>(width);
+        viewport.Height = static_cast<float>(height);
+        viewport.MinDepth = 0.0f;
+        viewport.MaxDepth = 1.0f;
+        d3dContext->RSSetViewports(1, &viewport);
+    }
+
+    void Renderer::End3DRender()
+    {
+        HRESULT hr = swapChain->GetBuffer(0, IID_PPV_ARGS(dxgiBackBuffer.ReleaseAndGetAddressOf()));
+        if (SUCCEEDED(hr))
+        {
+            D2D1_BITMAP_PROPERTIES1 props = D2D1::BitmapProperties1(
+                D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+                D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE)
+            );
+            
+            hr = d2dContext->CreateBitmapFromDxgiSurface(dxgiBackBuffer.Get(), &props, targetBitmap.ReleaseAndGetAddressOf());
+            if (SUCCEEDED(hr))
+            {
+                d2dContext->SetTarget(targetBitmap.Get());
+                d2dContext->BeginDraw();
+            }
+        }
+    }
+
+    void Renderer::SetViewMatrix(const DirectX::XMMATRIX& view)
+    {
+    }
+
+    void Renderer::SetProjectionMatrix(const DirectX::XMMATRIX& projection)
+    {
+    }
 }

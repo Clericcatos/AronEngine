@@ -51,4 +51,7 @@ namespace AronEngine
 
     #define DECLARE_OBJECT_TYPE(className) \
         virtual std::type_index GetType() const override { return std::type_index(typeid(className)); }
+        
+    #define DECLARE_COMPONENT_TYPE(className) \
+        virtual std::type_index GetType() const override { return std::type_index(typeid(className)); }
 }

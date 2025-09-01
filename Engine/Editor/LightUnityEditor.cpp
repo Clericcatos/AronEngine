@@ -6,6 +6,8 @@
 #include "Components/Transform.h"
 #include "Components/SpriteRenderer.h"
 #include "Components/AudioSource.h"
+#include "Components/Camera3D.h"
+#include "Components/MeshRenderer.h"
 #include "Resources/AudioClip.h"
 #include "Resources/Texture2D.h"
 #include "Managers/AudioManager.h"
@@ -364,6 +366,34 @@ namespace AronEngine
                 contentPos.y += 20;
             }
             
+            auto camera3D = selectedObject->GetComponent<Camera3D>();
+            if (camera3D)
+            {
+                renderer->DrawText(L"Camera3D Component", contentPos, Color(0.1f, 0.1f, 0.1f), L"Arial", 11.0f);
+                contentPos.y += 25;
+                
+                DirectX::XMFLOAT3 pos = camera3D->GetPosition();
+                std::wstring posStr = L"Position: " + std::to_wstring(pos.x) + L", " + std::to_wstring(pos.y) + L", " + std::to_wstring(pos.z);
+                renderer->DrawText(posStr.c_str(), contentPos, Color(0.2f, 0.2f, 0.2f), L"Arial", 9.0f);
+                contentPos.y += 20;
+                
+                std::wstring fovStr = L"FOV: " + std::to_wstring(camera3D->GetFOV());
+                renderer->DrawText(fovStr.c_str(), contentPos, Color(0.2f, 0.2f, 0.2f), L"Arial", 9.0f);
+                contentPos.y += 20;
+            }
+            
+            auto meshRenderer = selectedObject->GetComponent<MeshRenderer>();
+            if (meshRenderer)
+            {
+                renderer->DrawText(L"MeshRenderer Component", contentPos, Color(0.1f, 0.1f, 0.1f), L"Arial", 11.0f);
+                contentPos.y += 25;
+                
+                bool hasMesh = meshRenderer->GetMesh() != nullptr;
+                std::wstring meshStr = L"Mesh: " + std::wstring(hasMesh ? L"Loaded" : L"None");
+                renderer->DrawText(meshStr.c_str(), contentPos, Color(0.2f, 0.2f, 0.2f), L"Arial", 9.0f);
+                contentPos.y += 20;
+            }
+            
             contentPos.y += 10;
             renderer->DrawText(UI::INSPECTOR_ADD_COMPONENT, contentPos, Color(0.3f, 0.3f, 0.8f), L"Arial", 10.0f);
         }
@@ -558,10 +588,12 @@ namespace AronEngine
             L"----",
             UI::GO_SPRITE,
             UI::GO_CAMERA,
+            L"Camera3D",
+            L"3D Object",
             UI::GO_AUDIO_SOURCE
         };
         
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 8; i++)
         {
             if (wcscmp(items[i], L"----") == 0)
             {

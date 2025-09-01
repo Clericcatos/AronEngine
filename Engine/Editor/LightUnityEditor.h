@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Singleton.h"
 #include "Utils/Vector2.h"
+#include "Utils/Vector3.h"
 #include "Utils/Color.h"
 #include <windows.h>
 #include <memory>

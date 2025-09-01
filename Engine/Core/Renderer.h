@@ -4,6 +4,7 @@
 #include "../Utils/Color.h"
 #include "../Utils/Matrix3x2.h"
 #include "TextureManager.h"
+#include <DirectXMath.h>
 
 namespace AronEngine
 {
@@ -81,6 +82,11 @@ namespace AronEngine
         
         ID3D11Device* GetD3D11Device() const { return d3dDevice.Get(); }
         ID3D11DeviceContext* GetD3D11DeviceContext() const { return d3dContext.Get(); }
+        
+        void Begin3DRender();
+        void End3DRender();
+        void SetViewMatrix(const DirectX::XMMATRIX& view);
+        void SetProjectionMatrix(const DirectX::XMMATRIX& projection);
 
         int GetWidth() const { return width; }
         int GetHeight() const { return height; }

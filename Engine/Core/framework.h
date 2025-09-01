@@ -28,6 +28,7 @@
 #include <d3d11_1.h>
 #include <dxgi1_4.h>
 #include <d2d1effects_2.h>
+#include <DirectXMath.h>
 
 
 #pragma comment(lib, "d2d1.lib")

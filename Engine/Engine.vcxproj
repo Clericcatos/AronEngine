@@ -106,6 +106,8 @@
     <ClInclude Include="Components\AudioSource.h" />
     <ClInclude Include="Components\Collider.h" />
     <ClInclude Include="Components\Rigidbody.h" />
+    <ClInclude Include="Components\Camera3D.h" />
+    <ClInclude Include="Components\MeshRenderer.h" />
     <ClInclude Include="Components\UI\Canvas.h" />
     <ClInclude Include="Components\UI\UIElement.h" />
     <ClInclude Include="Components\UI\UIButton.h" />
@@ -155,6 +157,8 @@
     <ClCompile Include="Components\AudioSource.cpp" />
     <ClCompile Include="Components\Collider.cpp" />
     <ClCompile Include="Components\Rigidbody.cpp" />
+    <ClCompile Include="Components\Camera3D.cpp" />
+    <ClCompile Include="Components\MeshRenderer.cpp" />
     <ClCompile Include="Components\UI\Canvas.cpp" />
     <ClCompile Include="Components\UI\UIElement.cpp" />
     <ClCompile Include="Components\UI\UIButton.cpp" />
