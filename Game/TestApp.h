@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/EngineApp.h"
 #include "Core/GameObject.h"
+#include "Core/GameEngine.h"
 #include "Utils/Vector2.h"
 #include <memory>
 
@@ -15,6 +16,8 @@ namespace AronEngine
     private:
         std::shared_ptr<AudioClip> testAudioClip;
         std::unique_ptr<GameObject> testObject;
+        std::shared_ptr<GameObject> playerObject;
+        std::shared_ptr<GameObject> explosionTrigger;
         
         // Editor system
         LightUnityEditor* editorSystem;
@@ -24,6 +27,10 @@ namespace AronEngine
         Vector2 playerPos;
         Vector2 playerVel;
         bool isJumping;
+        
+        // Demo state
+        float effectTimer;
+        bool spacePressed;
         
     public:
         TestApp() = default;
@@ -36,5 +43,8 @@ namespace AronEngine
         
     private:
         void RenderSceneObject(GameObject* gameObject, Renderer* renderer);
+        void CreateDemoObjects();
+        void HandleDemoInput();
+        void UpdateDemoEffects(float deltaTime);
     };
 }

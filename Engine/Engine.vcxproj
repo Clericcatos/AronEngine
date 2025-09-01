@@ -131,6 +131,14 @@
     <ClInclude Include="Utils\Vector2.h" />
     <ClInclude Include="Utils\Color.h" />
     <ClInclude Include="Utils\Matrix3x2.h" />
+    <ClInclude Include="Components\AABB.h" />
+    <ClInclude Include="Components\SoundComponent.h" />
+    <ClInclude Include="Components\EffectComponent.h" />
+    <ClInclude Include="Managers\SoundBank.h" />
+    <ClInclude Include="Systems\EffectSystem.h" />
+    <ClInclude Include="Systems\VisualEffectSystem.h" />
+    <ClInclude Include="Resources\SpriteLoader.h" />
+    <ClInclude Include="Core\GameEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\EngineApp.cpp" />
@@ -178,6 +186,14 @@
     <ClCompile Include="Core\TextureManager.cpp" />
     <ClCompile Include="Utils\Vector2.cpp" />
     <ClCompile Include="Utils\Color.cpp" />
+    <ClCompile Include="Components\AABB.cpp" />
+    <ClCompile Include="Components\SoundComponent.cpp" />
+    <ClCompile Include="Components\EffectComponent.cpp" />
+    <ClCompile Include="Managers\SoundBank.cpp" />
+    <ClCompile Include="Systems\EffectSystem.cpp" />
+    <ClCompile Include="Systems\VisualEffectSystem.cpp" />
+    <ClCompile Include="Resources\SpriteLoader.cpp" />
+    <ClCompile Include="Core\GameEngine_Fixed.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

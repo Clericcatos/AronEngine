@@ -82,7 +82,6 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.3520
   컴파일하고 있습니다...
   SimpleAudioManager.cpp
   RenderSystem.cpp
-C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Systems\RenderSystem.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 'Systems/RenderSystem.cpp'을(를) 컴파일하는 중)
   
@@ -176,14 +175,15 @@ C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Core\Renderer.h(1,1): warning C4
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\SpriteRenderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 'Editor/LightUnityEditor.cpp'을(를) 컴파일하는 중)
   
-C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Editor\LightUnityEditor.cpp(644,23): warning C4066: 와이드 문자 상수에서 첫 문자 뒤의 문자는 무시됩니다.
-C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Editor\LightUnityEditor.cpp(644,39): warning C4066: 와이드 문자 상수에서 첫 문자 뒤의 문자는 무시됩니다.
-C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Editor\LightUnityEditor.cpp(652,28): warning C4066: 와이드 문자 상수에서 첫 문자 뒤의 문자는 무시됩니다.
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Editor\LightUnityEditor.cpp(734,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Editor\LightUnityEditor.cpp(805,23): warning C4066: 와이드 문자 상수에서 첫 문자 뒤의 문자는 무시됩니다.
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Editor\LightUnityEditor.cpp(805,39): warning C4066: 와이드 문자 상수에서 첫 문자 뒤의 문자는 무시됩니다.
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Editor\LightUnityEditor.cpp(813,28): warning C4066: 와이드 문자 상수에서 첫 문자 뒤의 문자는 무시됩니다.
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xutility(4813,18): warning C4244: '=': 'const wchar_t'에서 'char'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'Editor/LightUnityEditor.cpp'을(를) 컴파일하는 중)
       C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xutility(4813,18):
       템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
-          C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Editor\LightUnityEditor.cpp(805,25):
+          C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Editor\LightUnityEditor.cpp(966,25):
           컴파일되는 함수 템플릿 인스턴스화 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)'에 대한 참조를 확인하세요.
           with
           [
@@ -191,7 +191,7 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.3520
               _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
               _Alloc=std::allocator<char>
           ]
-              C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Editor\LightUnityEditor.cpp(805,25):
+              C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Editor\LightUnityEditor.cpp(966,25):
               'AronEngine::LightUnityEditor::HandleDragDrop'에서 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string'에 대한 첫 번째 참조를 확인하세요.
           C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring(812,17):
           컴파일되는 함수 템플릿 인스턴스화 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)'에 대한 참조를 확인하세요.
@@ -236,5 +236,35 @@ C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\SpriteRenderer.h(1,1)
   Vector2.cpp
   Color.cpp
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Utils\Color.cpp(22,17): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  AABB.cpp
+  SoundComponent.cpp
+  EffectComponent.cpp
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\SpriteRenderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Components/EffectComponent.cpp'을(를) 컴파일하는 중)
+  
+  SoundBank.cpp
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Managers\SoundBank.cpp(101,72): warning C4267: '인수': 'size_t'에서 '_Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Managers\SoundBank.cpp(101,72): warning C4267:         with
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Managers\SoundBank.cpp(101,72): warning C4267:         [
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Managers\SoundBank.cpp(101,72): warning C4267:             _Ty=int
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Managers\SoundBank.cpp(101,72): warning C4267:         ]
+  EffectSystem.cpp
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\SpriteRenderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Systems/EffectSystem.cpp'을(를) 컴파일하는 중)
+  
+  VisualEffectSystem.cpp
+  SpriteLoader.cpp
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\SpriteRenderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Resources/SpriteLoader.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\SpriteRenderer.h(11,12): warning C4099: 'AronEngine::Sprite': 처음에는 'class'을(를) 사용하여 형식 이름을 표시했는데 이제는 'struct'을(를) 사용하여 표시합니다.
+  (소스 파일 'Resources/SpriteLoader.cpp'을(를) 컴파일하는 중)
+      C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\SpriteRenderer.h(11,12):
+      'AronEngine::Sprite' 선언을 참조하십시오.
+  
+  GameEngine_Fixed.cpp
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Core/GameEngine_Fixed.cpp'을(를) 컴파일하는 중)
+  
   코드를 생성하고 있습니다...
   Engine.vcxproj -> C:\Users\User\Desktop\gitrepo\AronEngine\x64\Debug\Engine.lib

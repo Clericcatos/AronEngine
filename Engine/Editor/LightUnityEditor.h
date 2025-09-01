@@ -39,6 +39,7 @@ namespace AronEngine
         Vector2 scenePos, sceneSize;
         Vector2 inspectorPos, inspectorSize;
         Vector2 projectPos, projectSize;
+        Vector2 consolePos, consoleSize;
         Vector2 toolbarPos, toolbarSize;
         
         std::vector<AssetItem> assets;
@@ -61,11 +62,24 @@ namespace AronEngine
         bool showEditMenu;
         bool showGameObjectMenu;
         bool showComponentMenu;
+        bool showWindowMenu;
+        bool showHelpMenu;
+        
+        // 패널 가시성 상태
+        bool showHierarchyPanel;
+        bool showScenePanel;
+        bool showInspectorPanel;
+        bool showProjectPanel;
+        bool showConsolePanel;
         
         // 텍스트 편집
         bool isEditingText;
         std::string editingField;
         std::string tempEditValue;
+        
+        // 클릭 처리 상태
+        bool lastClickProcessed;
+        Vector2 lastClickPos;
 
     protected:
         LightUnityEditor();
@@ -105,6 +119,9 @@ namespace AronEngine
         void DrawEditMenu(Renderer* renderer);
         void DrawGameObjectMenu(Renderer* renderer);
         void DrawComponentMenu(Renderer* renderer);
+        void DrawWindowMenu(Renderer* renderer);
+        void DrawHelpMenu(Renderer* renderer);
+        void DrawConsole(Renderer* renderer);
         
         GameObject* CreateEmptyGameObject(const std::string& name, Vector2 position);
         GameObject* CreateSpriteGameObject(const std::string& name, Vector2 position);
@@ -120,6 +137,58 @@ namespace AronEngine
         
         void SaveScene(const std::string& fileName);
         void LoadScene(const std::string& fileName);
+        
+        // Menu Click Handlers
+        bool HandleFileMenuClick(Vector2 mousePos);
+        bool HandleEditMenuClick(Vector2 mousePos);
+        bool HandleGameObjectMenuClick(Vector2 mousePos);
+        bool HandleComponentMenuClick(Vector2 mousePos);
+        bool HandleWindowMenuClick(Vector2 mousePos);
+        bool HandleHelpMenuClick(Vector2 mousePos);
+        
+        // File Menu Actions
+        void CreateNewScene();
+        void OpenSceneDialog();
+        void SaveCurrentScene();
+        void SaveAsDialog();
+        void ShowBuildSettings();
+        void BuildAndRun();
+        void ExitApplication();
+        
+        // Edit Menu Actions
+        void UndoAction();
+        void RedoAction();
+        void CutSelected();
+        void CopySelected();
+        void PasteObject();
+        void DuplicateSelected();
+        
+        // GameObject Menu Actions
+        void CreateChildObject();
+        void CreateCameraObject(Vector2 position);
+        void CreateAudioSourceObject(Vector2 position);
+        
+        // Component Menu Actions
+        void AddSpriteRenderer();
+        void AddAudioSource();
+        void AddRigidbody();
+        void AddCollider();
+        void AddScript();
+        
+        // Scene Management
+        void SaveSceneToFile(const std::string& fileName);
+        void LoadSceneFromFile(const std::string& fileName);
+        
+        // Window Menu Actions
+        void ToggleHierarchyPanel();
+        void ToggleScenePanel();
+        void ToggleInspectorPanel();
+        void ToggleProjectPanel();
+        void ToggleConsolePanel();
+        
+        // Help Menu Actions
+        void ShowAboutDialog();
+        void ShowDocumentation();
         
         bool IsPointInRect(Vector2 point, Vector2 pos, Vector2 size);
     };

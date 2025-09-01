@@ -43,3 +43,11 @@ C:\Users\User\Desktop\gitrepo\AronEngine\ThirdParty\FMOD\lib\fmod_dummy.cpp;C:\U
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Core\TextureManager.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\TextureManager.obj
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Utils\Vector2.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\Vector2.obj
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Utils\Color.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\Color.obj
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\AABB.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\AABB.obj
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\SoundComponent.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\SoundComponent.obj
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\EffectComponent.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\EffectComponent.obj
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Managers\SoundBank.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\SoundBank.obj
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Systems\EffectSystem.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\EffectSystem.obj
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Systems\VisualEffectSystem.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\VisualEffectSystem.obj
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Resources\SpriteLoader.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\SpriteLoader.obj
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Core\GameEngine_Fixed.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\GameEngine_Fixed.obj

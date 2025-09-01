@@ -1,0 +1,8 @@
+# Explosion Effect Definition
+TEXTURE:Assets/Textures/explosion_spritesheet.png
+ANIMATION:Assets/Animations/explosion_anim.json
+SCALE:1.0
+DURATION:0.8
+LOOP:false
+AUTODESTROY:true
+SIZE:128,128

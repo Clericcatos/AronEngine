@@ -1,0 +1,35 @@
+# Combat Sound Bank Configuration
+# Format: GROUP:name, SOUND:path, VOLUME:value, PITCH:value, LOOP:true/false, 3D:true/false
+
+GROUP:PlayerFootsteps
+SOUND:Assets/Audio/footstep1.wav
+SOUND:Assets/Audio/footstep2.wav
+SOUND:Assets/Audio/footstep3.wav
+VOLUME:0.8
+PITCH:1.0
+LOOP:false
+3D:true
+
+GROUP:WeaponSounds
+SOUND:Assets/Audio/sword_swing.wav
+SOUND:Assets/Audio/sword_hit.wav
+VOLUME:1.0
+PITCH:1.0
+LOOP:false
+3D:true
+
+GROUP:ExplosionSound
+SOUND:Assets/Audio/explosion1.wav
+SOUND:Assets/Audio/explosion2.wav
+VOLUME:0.9
+PITCH:1.0
+LOOP:false
+3D:true
+
+GROUP:PlayerVoice
+SOUND:Assets/Audio/player_hurt.wav
+SOUND:Assets/Audio/player_attack.wav
+VOLUME:0.7
+PITCH:1.0
+LOOP:false
+3D:false
