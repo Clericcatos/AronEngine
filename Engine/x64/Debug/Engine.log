@@ -36,8 +36,15 @@ C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Core\Renderer.h(1,1): warning C4
   Camera3D.cpp
   MeshRenderer.cpp
   BasicMesh.cpp
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Rendering\BasicMesh.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Rendering\BasicMesh.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Rendering/BasicMesh.cpp'을(를) 컴파일하는 중)
+  
   Test01_Triangle.cpp
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Tests/Test01_Triangle.cpp'을(를) 컴파일하는 중)
+  
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Rendering\BasicMesh.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 'Tests/Test01_Triangle.cpp'을(를) 컴파일하는 중)
   
   Canvas.cpp

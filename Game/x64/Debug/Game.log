@@ -1,7 +1,14 @@
-﻿  TestApp.cpp
-C:\Users\User\Desktop\gitrepo\AronEngine\Game\TestApp.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(538,5): warning MSB8028: 중간 디렉터리(x64\Debug\)에 다른 프로젝트(SimpleQuad.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
+  compilation object save succeeded; see C:\Users\User\Desktop\gitrepo\AronEngine\x64\Debug\BasicVertexShader.cso
+  compilation object save succeeded; see C:\Users\User\Desktop\gitrepo\AronEngine\x64\Debug\BasicPixelShader.cso
+  main.cpp
+  TestApp.cpp
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 'TestApp.cpp'을(를) 컴파일하는 중)
   
-C:\Users\User\Desktop\gitrepo\AronEngine\Game\TestApp.cpp(68,77): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Test02_Quad.cpp
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Core\Renderer.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 'Test02_Quad.cpp'을(를) 컴파일하는 중)
+  
+  코드를 생성하고 있습니다...
   Game.vcxproj -> C:\Users\User\Desktop\gitrepo\AronEngine\x64\Debug\Game.exe

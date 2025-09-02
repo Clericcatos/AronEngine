@@ -91,6 +91,8 @@ namespace AronEngine
         
         ID3D11Device* GetD3D11Device() const { return d3dDevice.Get(); }
         ID3D11DeviceContext* GetD3D11DeviceContext() const { return d3dContext.Get(); }
+        ID3D11Device* GetD3DDevice() const { return d3dDevice.Get(); }
+        ID3D11DeviceContext* GetD3DContext() const { return d3dContext.Get(); }
         
         void Begin3DRender();
         void End3DRender();

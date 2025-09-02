@@ -4,6 +4,7 @@
 #include "Core/GameEngine.h"
 #include "Utils/Vector2.h"
 #include "Tests/Test01_Triangle.h"
+#include "Test02_Quad.h"
 #include <memory>
 
 namespace AronEngine
@@ -16,6 +17,10 @@ namespace AronEngine
         // 3D Test
         bool show3DTest;
         std::unique_ptr<Test01_Triangle> triangleTest;
+        
+        // Quad Renderer Test
+        std::unique_ptr<Test02_Quad> quadTest;
+        bool showQuadTest;
         
     public:
         TestApp() = default;

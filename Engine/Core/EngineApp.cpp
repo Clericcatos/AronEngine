@@ -32,18 +32,23 @@ namespace AronEngine
 
     bool EngineApp::Initialize(HINSTANCE hInstance, int width, int height, const std::wstring& title, bool editorMode)
     {
+        OutputDebugStringA("[EngineApp] Initialize started\n");
         this->hInstance = hInstance;
         this->width = width;
         this->height = height;
         this->windowTitle = title;
         this->isEditorMode = editorMode;
 
+        OutputDebugStringA("[EngineApp] Creating window...\n");
         if (!CreateAppWindow())
         {
             DEBUG_LOG("Failed to create window");
+            OutputDebugStringA("[EngineApp] ERROR: Failed to create window\n");
             return false;
         }
+        OutputDebugStringA("[EngineApp] Window created successfully\n");
 
+        OutputDebugStringA("[EngineApp] Creating engine components...\n");
         time = std::make_unique<Time>();
         input = std::make_unique<Input>();
         renderer = std::make_unique<Renderer>();
@@ -52,32 +57,48 @@ namespace AronEngine
         renderSystem = std::make_unique<RenderSystem>();
         transformSystem = std::make_unique<TransformSystem>();
         scriptSystem = std::make_unique<ScriptSystem>();
+        OutputDebugStringA("[EngineApp] Engine components created\n");
 
+        OutputDebugStringA("[EngineApp] Initializing renderer...\n");
         if (!renderer->Initialize(hWnd, width, height))
         {
             DEBUG_LOG("Failed to initialize renderer");
+            OutputDebugStringA("[EngineApp] ERROR: Failed to initialize renderer\n");
             return false;
         }
+        OutputDebugStringA("[EngineApp] Renderer initialized successfully\n");
 
+        OutputDebugStringA("[EngineApp] Initializing input...\n");
         if (!input->Initialize(hWnd))
         {
             DEBUG_LOG("Failed to initialize input");
+            OutputDebugStringA("[EngineApp] ERROR: Failed to initialize input\n");
             return false;
         }
+        OutputDebugStringA("[EngineApp] Input initialized successfully\n");
 
+        OutputDebugStringA("[EngineApp] Initializing audio manager...\n");
         if (!AudioManager::GetInstance().Initialize(hWnd))
         {
             DEBUG_LOG("Failed to initialize audio manager");
-            return false;
+            OutputDebugStringA("[EngineApp] WARNING: Failed to initialize audio manager (continuing anyway)\n");
+            // Don't return false - audio is optional
+        }
+        else
+        {
+            OutputDebugStringA("[EngineApp] Audio manager initialized successfully\n");
         }
 
-
+        OutputDebugStringA("[EngineApp] Calling OnInit...\n");
         OnInit();
+        OutputDebugStringA("[EngineApp] OnInit completed\n");
 
+        OutputDebugStringA("[EngineApp] Showing window...\n");
         ShowWindow(hWnd, SW_SHOW);
         UpdateWindow(hWnd);
 
         isRunning = true;
+        OutputDebugStringA("[EngineApp] Initialize completed successfully\n");
         return true;
     }
 

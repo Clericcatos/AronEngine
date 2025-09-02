@@ -4,7 +4,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{A7B5E8F1-2C3D-4E5F-6A7B-8C9D0E1F2A3B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{B8C6F9A2-3D4E-5F6A-7B8C-9D0E1F2A3B4C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "0902_SquareGraphicsTest", "Game\0902_SquareGraphicsTest.vcxproj", "{B8C6F9A2-3D4E-5F6A-7B8C-9D0E1F2A3B4C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A7B5E8F1-2C3D-4E5F-6A7B-8C9D0E1F2A3B} = {A7B5E8F1-2C3D-4E5F-6A7B-8C9D0E1F2A3B}
 	EndProjectSection

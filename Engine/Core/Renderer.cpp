@@ -26,6 +26,7 @@ namespace AronEngine
 
     bool Renderer::Initialize(HWND hWnd, int width, int height)
     {
+        OutputDebugStringA("[Renderer] Initialize started\n");
         this->hWnd = hWnd;
         this->width = width;
         this->height = height;
@@ -33,46 +34,65 @@ namespace AronEngine
         HRESULT hr = S_OK;
 
         // Create D2D factory
+        OutputDebugStringA("[Renderer] Creating D2D factory...\n");
         hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, d2dFactory.GetAddressOf());
         if (FAILED(hr))
         {
             DEBUG_LOG("Failed to create D2D factory");
+            OutputDebugStringA(("[Renderer] ERROR: Failed to create D2D factory. HRESULT: " + std::to_string(hr) + "\n").c_str());
             return false;
         }
+        OutputDebugStringA("[Renderer] D2D factory created successfully\n");
 
         // Create DWrite factory
+        OutputDebugStringA("[Renderer] Creating DWrite factory...\n");
         hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7),
             reinterpret_cast<IUnknown**>(dwriteFactory.GetAddressOf()));
         if (FAILED(hr))
         {
             DEBUG_LOG("Failed to create DWrite factory");
+            OutputDebugStringA(("[Renderer] ERROR: Failed to create DWrite factory. HRESULT: " + std::to_string(hr) + "\n").c_str());
             return false;
         }
+        OutputDebugStringA("[Renderer] DWrite factory created successfully\n");
 
         // Create WIC factory
+        OutputDebugStringA("[Renderer] Creating WIC factory...\n");
         hr = CoCreateInstance(CLSID_WICImagingFactory2, nullptr, CLSCTX_INPROC_SERVER,
             IID_PPV_ARGS(wicFactory.GetAddressOf()));
         if (FAILED(hr))
         {
             DEBUG_LOG("Failed to create WIC factory");
+            OutputDebugStringA(("[Renderer] ERROR: Failed to create WIC factory. HRESULT: " + std::to_string(hr) + "\n").c_str());
             return false;
         }
+        OutputDebugStringA("[Renderer] WIC factory created successfully\n");
 
+        OutputDebugStringA("[Renderer] Creating device resources...\n");
         if (!CreateDeviceResources())
         {
+            OutputDebugStringA("[Renderer] ERROR: Failed to create device resources\n");
             return false;
         }
+        OutputDebugStringA("[Renderer] Device resources created successfully\n");
 
+        OutputDebugStringA("[Renderer] Creating render target...\n");
         if (!CreateRenderTarget())
         {
+            OutputDebugStringA("[Renderer] ERROR: Failed to create render target\n");
             return false;
         }
+        OutputDebugStringA("[Renderer] Render target created successfully\n");
 
+        OutputDebugStringA("[Renderer] Initializing triangle resources...\n");
         if (!InitTriangleResources())
         {
+            OutputDebugStringA("[Renderer] ERROR: Failed to initialize triangle resources\n");
             return false;
         }
+        OutputDebugStringA("[Renderer] Triangle resources initialized successfully\n");
 
+        OutputDebugStringA("[Renderer] Initialize completed successfully\n");
         return true;
     }
 
@@ -113,13 +133,15 @@ namespace AronEngine
 
     bool Renderer::CreateDeviceResources()
     {
+        OutputDebugStringA("[Renderer] CreateDeviceResources started\n");
         HRESULT hr = S_OK;
 
         // Create D3D device
         UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-#ifdef _DEBUG
-        creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
+        // Disable debug layer for now - it might not be installed
+        // #ifdef _DEBUG
+        //     creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+        // #endif
 
         D3D_FEATURE_LEVEL featureLevels[] = {
             D3D_FEATURE_LEVEL_11_1,
@@ -129,6 +151,7 @@ namespace AronEngine
         };
 
         D3D_FEATURE_LEVEL featureLevel;
+        OutputDebugStringA("[Renderer] Creating D3D11 device...\n");
         hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, creationFlags,
             featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION,
             d3dDevice.GetAddressOf(), &featureLevel, d3dContext.GetAddressOf());
@@ -136,7 +159,24 @@ namespace AronEngine
         if (FAILED(hr))
         {
             DEBUG_LOG("Failed to create D3D device");
-            return false;
+            OutputDebugStringA(("[Renderer] ERROR: Failed to create D3D device. HRESULT: " + std::to_string(hr) + "\n").c_str());
+            
+            // Try software renderer as fallback
+            OutputDebugStringA("[Renderer] Trying software renderer...\n");
+            hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_WARP, nullptr, creationFlags,
+                featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION,
+                d3dDevice.GetAddressOf(), &featureLevel, d3dContext.GetAddressOf());
+            
+            if (FAILED(hr))
+            {
+                OutputDebugStringA(("[Renderer] ERROR: Failed to create D3D device with WARP. HRESULT: " + std::to_string(hr) + "\n").c_str());
+                return false;
+            }
+            OutputDebugStringA("[Renderer] D3D device created with software renderer\n");
+        }
+        else
+        {
+            OutputDebugStringA("[Renderer] D3D device created successfully\n");
         }
 
         // Get DXGI device
