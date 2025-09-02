@@ -25,6 +25,15 @@ namespace AronEngine
         ComPtr<ID3D11Device> d3dDevice;
         ComPtr<ID3D11DeviceContext> d3dContext;
         ComPtr<IDXGISurface> dxgiBackBuffer;
+        
+        // D3D11 triangle rendering resources
+        ComPtr<ID3D11Buffer> triangleVertexBuffer;
+        ComPtr<ID3D11VertexShader> triangleVertexShader;
+        ComPtr<ID3D11PixelShader> trianglePixelShader;
+        ComPtr<ID3D11InputLayout> triangleInputLayout;
+        ComPtr<ID3D11RenderTargetView> d3dRenderTargetView;
+        UINT triangleVertexStride;
+        UINT triangleVertexOffset;
 
         HWND hWnd;
         int width;
@@ -87,6 +96,8 @@ namespace AronEngine
         void End3DRender();
         void SetViewMatrix(const DirectX::XMMATRIX& view);
         void SetProjectionMatrix(const DirectX::XMMATRIX& projection);
+        
+        void DrawTriangle3D();
 
         int GetWidth() const { return width; }
         int GetHeight() const { return height; }
@@ -95,6 +106,9 @@ namespace AronEngine
         bool CreateDeviceResources();
         bool CreateRenderTarget();
         void ReleaseRenderTarget();
+        
+        bool InitTriangleResources();
+        void ReleaseTriangleResources();
         
         ComPtr<ID2D1SolidColorBrush> CreateSolidBrush(const Color& color);
         ComPtr<IDWriteTextFormat> CreateTextFormat(const std::wstring& fontName, float fontSize);

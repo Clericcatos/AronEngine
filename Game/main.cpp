@@ -10,7 +10,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     TestApp app;
     
-    if (app.Initialize(hInstance, 1600, 900, L"AronEngine - Game Editor", true))
+    if (app.Initialize(hInstance, 1600, 900, L"AronEngine - Game", false))
     {
         app.Run();
     }

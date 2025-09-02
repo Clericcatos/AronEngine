@@ -108,6 +108,8 @@
     <ClInclude Include="Components\Rigidbody.h" />
     <ClInclude Include="Components\Camera3D.h" />
     <ClInclude Include="Components\MeshRenderer.h" />
+    <ClInclude Include="Rendering\BasicMesh.h" />
+    <ClInclude Include="Tests\Test01_Triangle.h" />
     <ClInclude Include="Components\UI\Canvas.h" />
     <ClInclude Include="Components\UI\UIElement.h" />
     <ClInclude Include="Components\UI\UIButton.h" />
@@ -159,6 +161,8 @@
     <ClCompile Include="Components\Rigidbody.cpp" />
     <ClCompile Include="Components\Camera3D.cpp" />
     <ClCompile Include="Components\MeshRenderer.cpp" />
+    <ClCompile Include="Rendering\BasicMesh.cpp" />
+    <ClCompile Include="Tests\Test01_Triangle.cpp" />
     <ClCompile Include="Components\UI\Canvas.cpp" />
     <ClCompile Include="Components\UI\UIElement.cpp" />
     <ClCompile Include="Components\UI\UIButton.cpp" />

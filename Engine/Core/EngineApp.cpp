@@ -256,8 +256,15 @@ namespace AronEngine
                         wchar_t filePath[MAX_PATH];
                         if (DragQueryFileW(hDrop, i, filePath, MAX_PATH) > 0)
                         {
-                            // Send to RealUnityEditor
-                            LightUnityEditor::GetInstance().HandleDragDrop(filePath);
+                            // Only handle drag drop if in editor mode and editor is available
+                            if (app->isEditorMode)
+                            {
+                                // Check if LightUnityEditor is enabled before using it
+                                if (LightUnityEditor::GetInstance().IsEnabled())
+                                {
+                                    LightUnityEditor::GetInstance().HandleDragDrop(filePath);
+                                }
+                            }
                         }
                     }
                     

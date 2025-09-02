@@ -1,6 +1,12 @@
 #include "framework.h"
 #include "Renderer.h"
 #include "../Resources/Texture2D.h"
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
+
+#pragma comment(lib, "d3dcompiler.lib")
+
+using namespace DirectX;
 
 namespace AronEngine
 {
@@ -8,6 +14,8 @@ namespace AronEngine
         : hWnd(nullptr)
         , width(0)
         , height(0)
+        , triangleVertexStride(0)
+        , triangleVertexOffset(0)
     {
     }
 
@@ -60,11 +68,17 @@ namespace AronEngine
             return false;
         }
 
+        if (!InitTriangleResources())
+        {
+            return false;
+        }
+
         return true;
     }
 
     void Renderer::Shutdown()
     {
+        ReleaseTriangleResources();
         ReleaseRenderTarget();
         targetBitmap.Reset();
         swapChain.Reset();
@@ -507,15 +521,22 @@ namespace AronEngine
     {
         d2dContext->EndDraw();
         
-        ComPtr<ID3D11RenderTargetView> renderTargetView;
         ComPtr<ID3D11Texture2D> backBuffer;
-        
         swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer));
-        d3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, &renderTargetView);
         
-        d3dContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
+        if (!d3dRenderTargetView)
+        {
+            d3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, &d3dRenderTargetView);
+        }
+        
+        d3dContext->OMSetRenderTargets(1, d3dRenderTargetView.GetAddressOf(), nullptr);
+        
+        float clearColor[4] = { 0.0f, 0.2f, 0.4f, 1.0f };
+        d3dContext->ClearRenderTargetView(d3dRenderTargetView.Get(), clearColor);
         
         D3D11_VIEWPORT viewport = {};
+        viewport.TopLeftX = 0;
+        viewport.TopLeftY = 0;
         viewport.Width = static_cast<float>(width);
         viewport.Height = static_cast<float>(height);
         viewport.MinDepth = 0.0f;
@@ -525,6 +546,8 @@ namespace AronEngine
 
     void Renderer::End3DRender()
     {
+        swapChain->Present(1, 0);
+        
         HRESULT hr = swapChain->GetBuffer(0, IID_PPV_ARGS(dxgiBackBuffer.ReleaseAndGetAddressOf()));
         if (SUCCEEDED(hr))
         {
@@ -548,5 +571,103 @@ namespace AronEngine
 
     void Renderer::SetProjectionMatrix(const DirectX::XMMATRIX& projection)
     {
+    }
+
+    void Renderer::DrawTriangle3D()
+    {
+        if (!triangleVertexBuffer || !triangleVertexShader || !trianglePixelShader || !triangleInputLayout)
+            return;
+
+        d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        d3dContext->IASetVertexBuffers(0, 1, triangleVertexBuffer.GetAddressOf(), &triangleVertexStride, &triangleVertexOffset);
+        d3dContext->IASetInputLayout(triangleInputLayout.Get());
+        d3dContext->VSSetShader(triangleVertexShader.Get(), nullptr, 0);
+        d3dContext->PSSetShader(trianglePixelShader.Get(), nullptr, 0);
+        
+        d3dContext->Draw(3, 0);
+    }
+
+    bool Renderer::InitTriangleResources()
+    {
+        HRESULT hr = S_OK;
+
+        struct Vertex
+        {
+            XMFLOAT3 position;
+        };
+
+        Vertex vertices[] = {
+            { XMFLOAT3(-0.5f, -0.5f, 0.5f) },
+            { XMFLOAT3(0.0f, 0.5f, 0.5f) },
+            { XMFLOAT3(0.5f, -0.5f, 0.5f) }
+        };
+
+        D3D11_BUFFER_DESC vbDesc = {};
+        vbDesc.ByteWidth = sizeof(Vertex) * 3;
+        vbDesc.Usage = D3D11_USAGE_DEFAULT;
+        vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+        D3D11_SUBRESOURCE_DATA vbData = {};
+        vbData.pSysMem = vertices;
+
+        hr = d3dDevice->CreateBuffer(&vbDesc, &vbData, triangleVertexBuffer.GetAddressOf());
+        if (FAILED(hr)) return false;
+
+        triangleVertexStride = sizeof(Vertex);
+        triangleVertexOffset = 0;
+
+        ComPtr<ID3DBlob> vertexShaderBlob;
+        ComPtr<ID3DBlob> errorBlob;
+
+        hr = D3DCompileFromFile(L"BasicVertexShader.hlsl", nullptr, nullptr, "main", "vs_4_0", 
+            D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, vertexShaderBlob.GetAddressOf(), errorBlob.GetAddressOf());
+        if (FAILED(hr)) 
+        {
+            if (errorBlob)
+            {
+                OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+            }
+            return false;
+        }
+
+        hr = d3dDevice->CreateVertexShader(vertexShaderBlob->GetBufferPointer(), 
+            vertexShaderBlob->GetBufferSize(), nullptr, triangleVertexShader.GetAddressOf());
+        if (FAILED(hr)) return false;
+
+        D3D11_INPUT_ELEMENT_DESC layout[] = {
+            { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        };
+
+        hr = d3dDevice->CreateInputLayout(layout, ARRAYSIZE(layout), 
+            vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), 
+            triangleInputLayout.GetAddressOf());
+        if (FAILED(hr)) return false;
+
+        ComPtr<ID3DBlob> pixelShaderBlob;
+        hr = D3DCompileFromFile(L"BasicPixelShader.hlsl", nullptr, nullptr, "main", "ps_4_0",
+            D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, pixelShaderBlob.GetAddressOf(), errorBlob.GetAddressOf());
+        if (FAILED(hr)) 
+        {
+            if (errorBlob)
+            {
+                OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+            }
+            return false;
+        }
+
+        hr = d3dDevice->CreatePixelShader(pixelShaderBlob->GetBufferPointer(),
+            pixelShaderBlob->GetBufferSize(), nullptr, trianglePixelShader.GetAddressOf());
+        if (FAILED(hr)) return false;
+
+        return true;
+    }
+
+    void Renderer::ReleaseTriangleResources()
+    {
+        d3dRenderTargetView.Reset();
+        triangleInputLayout.Reset();
+        trianglePixelShader.Reset();
+        triangleVertexShader.Reset();
+        triangleVertexBuffer.Reset();
     }
 }

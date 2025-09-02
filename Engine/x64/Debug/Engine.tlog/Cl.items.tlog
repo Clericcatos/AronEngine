@@ -14,6 +14,8 @@ C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\Collider.cpp;C:\Users
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\Rigidbody.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\Rigidbody.obj
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\Camera3D.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\Camera3D.obj
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\MeshRenderer.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\MeshRenderer.obj
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Rendering\BasicMesh.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\BasicMesh.obj
+C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Tests\Test01_Triangle.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\Test01_Triangle.obj
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\UI\Canvas.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\Canvas.obj
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\UI\UIElement.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\UIElement.obj
 C:\Users\User\Desktop\gitrepo\AronEngine\Engine\Components\UI\UIButton.cpp;C:\Users\User\Desktop\gitrepo\AronEngine\Engine\x64\Debug\UIButton.obj
